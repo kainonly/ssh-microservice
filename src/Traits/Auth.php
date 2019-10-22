@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace Hyperf\Support\Traits;
 
 use Hyperf\HttpServer\Contract\ResponseInterface;
+use Hyperf\Support\Facades\Token;
 
 /**
  * Trait Auth
@@ -12,11 +13,12 @@ use Hyperf\HttpServer\Contract\ResponseInterface;
  */
 trait Auth
 {
-    protected function __auth()
+    protected function __auth(string $scene, array $symbol = [])
     {
+        $stringToken = (string)Token::create($scene, $symbol);
         return $this->response->json([
-            'error' => 1,
-            'msg' => ''
+            'error' => 0,
+            'token' => $stringToken
         ]);
     }
 }

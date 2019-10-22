@@ -10,7 +10,7 @@ use Hyperf\Extra\Contract\HashServiceInterface;
  * Class Hash
  * @package Hyperf\Support\Facades
  * @method static string make(string $password, array $options = [])
- * @method static boolean check(string $password, string $hash)
+ * @method static bool check(string $password, string $hash)
  */
 final class Hash extends Facade
 {
