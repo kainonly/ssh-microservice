@@ -3,18 +3,23 @@ declare(strict_types=1);
 
 namespace Hyperf\Support\Traits;
 
+use Hyperf\Utils\Str;
+use Hyperf\Extra\Contract\TokenServiceInterface;
+use Hyperf\Extra\Contract\UtilsServiceInterface;
 use Hyperf\HttpServer\Contract\RequestInterface;
 use Hyperf\HttpServer\Contract\ResponseInterface;
-use Hyperf\Support\Facades\Token;
-use Hyperf\Support\Facades\Utils;
 use Hyperf\Support\Redis\RefreshToken;
-use Hyperf\Utils\Str;
+use Psr\Container\ContainerInterface;
 
 /**
  * Trait Auth
  * @package Hyperf\Support\Traits
  * @property RequestInterface $request
  * @property ResponseInterface $response
+ * @property ContainerInterface $container
+ * @property TokenServiceInterface $token
+ * @property UtilsServiceInterface $utils
+ * @property \Redis $redis
  */
 trait Auth
 {
@@ -32,20 +37,21 @@ trait Auth
      * @param string $scene
      * @param array $symbol
      * @return \Psr\Http\Message\ResponseInterface
+     * @throws \Exception
      */
     protected function __create(string $scene, array $symbol = [])
     {
-        $jti = Utils::uuid()->toString();
+        $jti = $this->utils->uuid()->toString();
         $ack = Str::random();
-        $result = RefreshToken::create()->factory($jti, $ack, $this->__refreshTokenExpires());
+        $result = RefreshToken::create($this->container)->factory($jti, $ack, $this->__refreshTokenExpires());
         if (!$result) {
             return $this->response->json([
                 'error' => 1,
                 'msg' => 'refresh token set failed'
             ]);
         }
-        $tokenString = (string)Token::create($scene, $jti, $ack, $symbol);
-        $cookie = Utils::cookie($scene . '_token', $tokenString);
+        $tokenString = (string)$this->token->create($scene, $jti, $ack, $symbol);
+        $cookie = $this->utils->cookie($scene . '_token', $tokenString);
         return $this->response->withCookie($cookie)->json([
             'error' => 0,
             'msg' => 'ok'
@@ -61,7 +67,7 @@ trait Auth
     {
         try {
             $tokenString = $this->request->cookie($scene . '_token');
-            $result = Token::verify($scene, $tokenString);
+            $result = $this->token->verify($scene, $tokenString);
             if ($result->expired) {
                 /**
                  * @var $token \Lcobucci\JWT\Token
@@ -69,7 +75,7 @@ trait Auth
                 $token = $result->token;
                 $jti = $token->getClaim('jti');
                 $ack = $token->getClaim('ack');
-                $verify = RefreshToken::create()->verify($jti, $ack);
+                $verify = RefreshToken::create($this->container)->verify($jti, $ack);
                 if (!$verify) {
                     return [
                         'error' => 1,
@@ -77,13 +83,13 @@ trait Auth
                     ];
                 }
                 $symbol = $token->getClaim('symbol');
-                $preTokenString = (string)Token::create(
+                $preTokenString = (string)$this->token->create(
                     $scene . '_token',
                     $jti,
                     $ack,
                     $symbol
                 );
-                $cookie = Utils::cookie($scene . '_token', $preTokenString);
+                $cookie = $this->utils->cookie($scene . '_token', $preTokenString);
                 return $this->response->withCookie($cookie)->json([
                     'error' => 0,
                     'msg' => 'ok'
@@ -110,12 +116,12 @@ trait Auth
     protected function __destory(string $scene)
     {
         $tokenString = $this->request->cookie($scene . '_token');
-        $token = Token::get($tokenString);
-        RefreshToken::create()->clear(
+        $token = $this->token->get($tokenString);
+        RefreshToken::create($this->container)->clear(
             $token->getClaim('jti'),
             $token->getClaim('ack')
         );
-        $cookie = Utils::cookie($scene . '_token', '');
+        $cookie = $this->utils->cookie($scene . '_token', '');
         return $this->response->withCookie($cookie)->json([
             'error' => 0,
             'msg' => 'ok'
