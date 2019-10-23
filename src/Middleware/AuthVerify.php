@@ -57,7 +57,9 @@ abstract class AuthVerify implements MiddlewareInterface
         try {
             $tokenString = $request->getCookieParams()[$this->scene . '_token'];
             $result = $this->token->verify($this->scene, $tokenString);
+            $cookie = null;
             if ($result->expired) {
+                $response = Context::get(ResponseInterface::class);
                 /**
                  * @var $token \Lcobucci\JWT\Token
                  */
@@ -73,15 +75,19 @@ abstract class AuthVerify implements MiddlewareInterface
                 }
                 $symbol = (array)$token->getClaim('symbol');
                 $preTokenString = (string)$this->token->create(
-                    $this->scene . '_token',
+                    $this->scene,
                     $jti,
                     $ack,
                     $symbol
                 );
+                if (!$preTokenString) {
+                    return $this->response->json([
+                        'error' => 1,
+                        'msg' => 'create token failed'
+                    ]);
+                }
                 $cookie = $this->utils->cookie($this->scene . '_token', $preTokenString);
-                var_dump(Context::get(RequestHandlerInterface::class));
             }
-
             return $handler->handle($request);
         } catch (\Exception $e) {
             return $this->response->json([

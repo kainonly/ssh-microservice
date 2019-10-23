@@ -36,7 +36,7 @@ trait Auth
      * Create Cookie Auth
      * @param string $scene
      * @param array $symbol
-     * @return \Psr\Http\Message\ResponseInterface
+     * @return array|\Psr\Http\Message\ResponseInterface
      * @throws \Exception
      */
     protected function __create(string $scene, array $symbol = [])
@@ -51,6 +51,12 @@ trait Auth
             ]);
         }
         $tokenString = (string)$this->token->create($scene, $jti, $ack, $symbol);
+        if (!$tokenString) {
+            return [
+                'error' => 1,
+                'msg' => 'create token failed'
+            ];
+        }
         $cookie = $this->utils->cookie($scene . '_token', $tokenString);
         return $this->response->withCookie($cookie)->json([
             'error' => 0,
@@ -67,6 +73,13 @@ trait Auth
     {
         try {
             $tokenString = $this->request->cookie($scene . '_token');
+            if (empty($tokenString)) {
+                return [
+                    'error' => 1,
+                    'msg' => 'refresh token not exists'
+                ];
+            }
+
             $result = $this->token->verify($scene, $tokenString);
             if ($result->expired) {
                 /**
@@ -82,13 +95,19 @@ trait Auth
                         'msg' => 'refresh token verification expired'
                     ];
                 }
-                $symbol = $token->getClaim('symbol');
+                $symbol = (array)$token->getClaim('symbol');
                 $preTokenString = (string)$this->token->create(
-                    $scene . '_token',
+                    $scene,
                     $jti,
                     $ack,
                     $symbol
                 );
+                if (!$preTokenString) {
+                    return [
+                        'error' => 1,
+                        'msg' => 'create token failed'
+                    ];
+                }
                 $cookie = $this->utils->cookie($scene . '_token', $preTokenString);
                 return $this->response->withCookie($cookie)->json([
                     'error' => 0,
