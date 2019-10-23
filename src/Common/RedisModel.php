@@ -3,8 +3,12 @@ declare(strict_types=1);
 
 namespace Hyperf\Support\Common;
 
-use Hyperf\Utils\ApplicationContext;
+use Psr\Container\ContainerInterface;
 
+/**
+ * Class RedisModel
+ * @package Hyperf\Support\Common
+ */
 abstract class RedisModel
 {
     /**
@@ -12,7 +16,10 @@ abstract class RedisModel
      * @var string $key
      */
     protected $key;
-
+    /**
+     * @var ContainerInterface
+     */
+    protected $container;
     /**
      * Redis Manager
      * @var  \Redis $redis
@@ -21,13 +28,13 @@ abstract class RedisModel
 
     /**
      * Create RedisModel
-     * @param \Redis|null $redis
+     * @param \Redis $redis
      * @return static
      */
-    public static function create(\Redis $redis = null)
+    public static function create(ContainerInterface $container)
     {
         return make(static::class, [
-            $redis
+            $container
         ]);
     }
 
@@ -35,9 +42,9 @@ abstract class RedisModel
      * RedisModel constructor.
      * @param \Redis $redis
      */
-    public function __construct(\Redis $redis = null)
+    public function __construct(ContainerInterface $container)
     {
-        $this->redis = !empty($redis) ?
-            $redis : ApplicationContext::getContainer()->get(\Redis::class);
+        $this->container = $container;
+        $this->redis = $container->get(\Redis::class);
     }
 }

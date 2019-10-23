@@ -3,12 +3,23 @@ declare(strict_types=1);
 
 namespace Hyperf\Support\Redis;
 
+use Hyperf\Extra\Contract\HashServiceInterface;
 use Hyperf\Support\Common\RedisModel;
-use Hyperf\Support\Facades\Hash;
+use Psr\Container\ContainerInterface;
 
 class RefreshToken extends RedisModel
 {
     protected $key = 'refresh-token:';
+    /**
+     * @var HashServiceInterface
+     */
+    private $hash;
+
+    public function __construct(ContainerInterface $container)
+    {
+        parent::__construct($container);
+        $this->hash = $container->get(HashServiceInterface::class);
+    }
 
     /**
      * Factory Refresh Token
@@ -22,7 +33,7 @@ class RefreshToken extends RedisModel
         return $this->redis->setex(
             $this->key . $jti,
             $expires,
-            Hash::make($ack)
+            $this->hash->make($ack)
         );
     }
 
@@ -38,7 +49,7 @@ class RefreshToken extends RedisModel
             return false;
         }
 
-        return Hash::check(
+        return $this->hash->check(
             $ack,
             $this->redis->get($this->key . $jti)
         );
@@ -56,7 +67,7 @@ class RefreshToken extends RedisModel
             return true;
         }
 
-        if (!Hash::check($ack, $this->redis->get($this->key . $jti))) {
+        if (!$this->hash->check($ack, $this->redis->get($this->key . $jti))) {
             return false;
         }
 
