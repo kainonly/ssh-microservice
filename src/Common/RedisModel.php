@@ -20,6 +20,18 @@ abstract class RedisModel
     protected $redis;
 
     /**
+     * Create RedisModel
+     * @param \Redis|null $redis
+     * @return static
+     */
+    public static function create(\Redis $redis = null)
+    {
+        return make(static::class, [
+            $redis
+        ]);
+    }
+
+    /**
      * RedisModel constructor.
      * @param \Redis $redis
      */

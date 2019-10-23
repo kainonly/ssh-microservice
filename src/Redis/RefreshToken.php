@@ -15,7 +15,7 @@ class RefreshToken extends RedisModel
      * @param string $jti Token ID
      * @param string $ack Ack Code
      * @param int $expires Expires
-     * @return mixed
+     * @return bool
      */
     public function factory(string $jti, string $ack, int $expires)
     {
