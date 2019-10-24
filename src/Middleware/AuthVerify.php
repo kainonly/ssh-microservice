@@ -14,8 +14,15 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 
+/**
+ * Class AuthVerify
+ * @package Hyperf\Support\Middleware
+ */
 abstract class AuthVerify implements MiddlewareInterface
 {
+    /**
+     * @var string
+     */
     protected $scene = 'default';
     /**
      * @var ContainerInterface
@@ -34,6 +41,11 @@ abstract class AuthVerify implements MiddlewareInterface
      */
     private $utils;
 
+    /**
+     * AuthVerify constructor.
+     * @param ContainerInterface $container
+     * @param HttpResponse $response
+     */
     public function __construct(ContainerInterface $container, HttpResponse $response)
     {
         $this->container = $container;
