@@ -34,10 +34,7 @@ abstract class AuthVerify implements MiddlewareInterface
      */
     private $utils;
 
-    public function __construct(
-        ContainerInterface $container,
-        HttpResponse $response
-    )
+    public function __construct(ContainerInterface $container, HttpResponse $response)
     {
         $this->container = $container;
         $this->response = $response;
@@ -55,9 +52,15 @@ abstract class AuthVerify implements MiddlewareInterface
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         try {
-            $tokenString = $request->getCookieParams()[$this->scene . '_token'];
+            $cookies = $request->getCookieParams();
+            if (empty($cookies[$this->scene . '_token'])) {
+                return $this->response->json([
+                    'error' => 1,
+                    'msg' => 'please first authorize user login'
+                ]);
+            }
+            $tokenString = $cookies[$this->scene . '_token'];
             $result = $this->token->verify($this->scene, $tokenString);
-            $cookie = null;
             if ($result->expired) {
                 $response = Context::get(ResponseInterface::class);
                 /**
@@ -87,6 +90,8 @@ abstract class AuthVerify implements MiddlewareInterface
                     ]);
                 }
                 $cookie = $this->utils->cookie($this->scene . '_token', $preTokenString);
+                $response = $response->withCookie($cookie);
+                Context::set(ResponseInterface::class, $response);
             }
             return $handler->handle($request);
         } catch (\Exception $e) {
