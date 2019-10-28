@@ -1,3 +1,3 @@
 # Hyperf Support
 
-Feature support library like Laravel for Hyperf framework
+Feature support library for Hyperf framework
