@@ -1,0 +1,19 @@
+{
+    "name": "kain/lumen-amqp",
+    "description": "AMQP library for Lumen framework",
+    "require": {
+        "laravel/lumen-framework": "^6.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Lumen\\AMQP\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "kain",
+            "email": "zhangtqx@vip.qq.com"
+        }
+    ],
+    "license": "MIT"
+}
