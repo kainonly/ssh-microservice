@@ -1,8 +1,8 @@
 package controller
 
 import (
-	"ssh-gRPC/client"
-	pb "ssh-gRPC/router"
+	"ssh-microservice/client"
+	pb "ssh-microservice/router"
 )
 
 type controller struct {

@@ -2,7 +2,7 @@ package controller
 
 import (
 	"context"
-	pb "ssh-gRPC/router"
+	pb "ssh-microservice/router"
 )
 
 func (c *controller) Testing(ctx context.Context, params *pb.TestingParameter) (*pb.CommonResponse, error) {

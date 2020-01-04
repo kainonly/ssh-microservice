@@ -1,6 +1,6 @@
 package client
 
-import "ssh-gRPC/common"
+import "ssh-microservice/common"
 
 // Delete ssh client
 func (c *Client) Delete(identity string) (err error) {
