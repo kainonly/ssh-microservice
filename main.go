@@ -4,9 +4,9 @@ import (
 	"google.golang.org/grpc"
 	"log"
 	"net"
-	"ssh-gRPC/client"
-	"ssh-gRPC/controller"
-	pb "ssh-gRPC/router"
+	"ssh-microservice/client"
+	"ssh-microservice/controller"
+	pb "ssh-microservice/router"
 )
 
 func main() {

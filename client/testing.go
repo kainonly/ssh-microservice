@@ -2,7 +2,7 @@ package client
 
 import (
 	"golang.org/x/crypto/ssh"
-	"ssh-gRPC/common"
+	"ssh-microservice/common"
 )
 
 // Test ssh client connection

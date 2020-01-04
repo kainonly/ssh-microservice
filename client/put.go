@@ -1,7 +1,7 @@
 package client
 
 import (
-	"ssh-gRPC/common"
+	"ssh-microservice/common"
 	"sync"
 )
 

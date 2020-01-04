@@ -2,7 +2,7 @@ package client
 
 import (
 	"errors"
-	"ssh-gRPC/common"
+	"ssh-microservice/common"
 )
 
 type Information struct {

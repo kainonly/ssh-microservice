@@ -3,7 +3,7 @@ package client
 import (
 	"golang.org/x/crypto/ssh"
 	"log"
-	"ssh-gRPC/common"
+	"ssh-microservice/common"
 )
 
 type Client struct {
