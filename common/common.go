@@ -12,7 +12,7 @@ import (
 type (
 	ConnectOption struct {
 		Host       string `json:"host"`
-		Port       uint   `json:"port"`
+		Port       uint32 `json:"port"`
 		Username   string `json:"username"`
 		Password   string `json:"password"`
 		Key        []byte `json:"key"`
