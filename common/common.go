@@ -24,9 +24,9 @@ type (
 	}
 	TunnelOption struct {
 		SrcIp   string `json:"src_ip" validate:"required,ip"`
-		SrcPort uint   `json:"src_port" validate:"required,numeric"`
+		SrcPort uint32 `json:"src_port" validate:"required,numeric"`
 		DstIp   string `json:"dst_ip" validate:"required,ip"`
-		DstPort uint   `json:"dst_port" validate:"required,numeric"`
+		DstPort uint32 `json:"dst_port" validate:"required,numeric"`
 	}
 	ConfigOption struct {
 		Connect map[string]*ConnectOption  `json:"connect"`

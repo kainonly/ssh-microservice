@@ -49,7 +49,7 @@ func (c *Client) connect(option common.ConnectOption) (client *ssh.Client, err e
 		Auth:            auth,
 		HostKeyCallback: ssh.InsecureIgnoreHostKey(),
 	}
-	addr := common.GetAddr(option.Host, option.Port)
+	addr := common.GetAddr(option.Host, uint(option.Port))
 	client, err = ssh.Dial("tcp", addr, &config)
 	return
 }
