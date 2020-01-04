@@ -4,8 +4,12 @@
 package router
 
 import (
+	context "context"
 	fmt "fmt"
 	proto "github.com/golang/protobuf/proto"
+	grpc "google.golang.org/grpc"
+	codes "google.golang.org/grpc/codes"
+	status "google.golang.org/grpc/status"
 	math "math"
 )
 
@@ -866,4 +870,336 @@ var fileDescriptor_367072455c71aedc = []byte{
 	0x87, 0xad, 0x12, 0xec, 0x8f, 0xd9, 0x0a, 0x87, 0xb4, 0x63, 0x36, 0x55, 0xee, 0x4f, 0x6f, 0xea,
 	0x0e, 0x2f, 0x6b, 0x80, 0x5e, 0xda, 0xe6, 0xbf, 0xe8, 0xf5, 0xdf, 0x00, 0x00, 0x00, 0xff, 0xff,
 	0x31, 0x02, 0xbd, 0xa6, 0x9b, 0x06, 0x00, 0x00,
+}
+
+// Reference imports to suppress errors if they are not otherwise used.
+var _ context.Context
+var _ grpc.ClientConn
+
+// This is a compile-time assertion to ensure that this generated file
+// is compatible with the grpc package it is being compiled against.
+const _ = grpc.SupportPackageIsVersion4
+
+// RouterClient is the client API for Router service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
+type RouterClient interface {
+	Testing(ctx context.Context, in *TestingParameter, opts ...grpc.CallOption) (*CommonResponse, error)
+	Put(ctx context.Context, in *PutParameter, opts ...grpc.CallOption) (*CommonResponse, error)
+	Exec(ctx context.Context, in *ExecParameter, opts ...grpc.CallOption) (*ExecResponse, error)
+	Delete(ctx context.Context, in *DeleteParameter, opts ...grpc.CallOption) (*CommonResponse, error)
+	Get(ctx context.Context, in *GetParameter, opts ...grpc.CallOption) (*GetResponse, error)
+	All(ctx context.Context, in *AllParameter, opts ...grpc.CallOption) (*AllResponse, error)
+	Lists(ctx context.Context, in *ListsParameter, opts ...grpc.CallOption) (*ListsResponse, error)
+	Tunnels(ctx context.Context, in *TunnelsParameter, opts ...grpc.CallOption) (*CommonResponse, error)
+}
+
+type routerClient struct {
+	cc *grpc.ClientConn
+}
+
+func NewRouterClient(cc *grpc.ClientConn) RouterClient {
+	return &routerClient{cc}
+}
+
+func (c *routerClient) Testing(ctx context.Context, in *TestingParameter, opts ...grpc.CallOption) (*CommonResponse, error) {
+	out := new(CommonResponse)
+	err := c.cc.Invoke(ctx, "/Router/Testing", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *routerClient) Put(ctx context.Context, in *PutParameter, opts ...grpc.CallOption) (*CommonResponse, error) {
+	out := new(CommonResponse)
+	err := c.cc.Invoke(ctx, "/Router/Put", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *routerClient) Exec(ctx context.Context, in *ExecParameter, opts ...grpc.CallOption) (*ExecResponse, error) {
+	out := new(ExecResponse)
+	err := c.cc.Invoke(ctx, "/Router/Exec", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *routerClient) Delete(ctx context.Context, in *DeleteParameter, opts ...grpc.CallOption) (*CommonResponse, error) {
+	out := new(CommonResponse)
+	err := c.cc.Invoke(ctx, "/Router/Delete", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *routerClient) Get(ctx context.Context, in *GetParameter, opts ...grpc.CallOption) (*GetResponse, error) {
+	out := new(GetResponse)
+	err := c.cc.Invoke(ctx, "/Router/Get", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *routerClient) All(ctx context.Context, in *AllParameter, opts ...grpc.CallOption) (*AllResponse, error) {
+	out := new(AllResponse)
+	err := c.cc.Invoke(ctx, "/Router/All", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *routerClient) Lists(ctx context.Context, in *ListsParameter, opts ...grpc.CallOption) (*ListsResponse, error) {
+	out := new(ListsResponse)
+	err := c.cc.Invoke(ctx, "/Router/Lists", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *routerClient) Tunnels(ctx context.Context, in *TunnelsParameter, opts ...grpc.CallOption) (*CommonResponse, error) {
+	out := new(CommonResponse)
+	err := c.cc.Invoke(ctx, "/Router/Tunnels", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// RouterServer is the server API for Router service.
+type RouterServer interface {
+	Testing(context.Context, *TestingParameter) (*CommonResponse, error)
+	Put(context.Context, *PutParameter) (*CommonResponse, error)
+	Exec(context.Context, *ExecParameter) (*ExecResponse, error)
+	Delete(context.Context, *DeleteParameter) (*CommonResponse, error)
+	Get(context.Context, *GetParameter) (*GetResponse, error)
+	All(context.Context, *AllParameter) (*AllResponse, error)
+	Lists(context.Context, *ListsParameter) (*ListsResponse, error)
+	Tunnels(context.Context, *TunnelsParameter) (*CommonResponse, error)
+}
+
+// UnimplementedRouterServer can be embedded to have forward compatible implementations.
+type UnimplementedRouterServer struct {
+}
+
+func (*UnimplementedRouterServer) Testing(ctx context.Context, req *TestingParameter) (*CommonResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Testing not implemented")
+}
+func (*UnimplementedRouterServer) Put(ctx context.Context, req *PutParameter) (*CommonResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Put not implemented")
+}
+func (*UnimplementedRouterServer) Exec(ctx context.Context, req *ExecParameter) (*ExecResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Exec not implemented")
+}
+func (*UnimplementedRouterServer) Delete(ctx context.Context, req *DeleteParameter) (*CommonResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Delete not implemented")
+}
+func (*UnimplementedRouterServer) Get(ctx context.Context, req *GetParameter) (*GetResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Get not implemented")
+}
+func (*UnimplementedRouterServer) All(ctx context.Context, req *AllParameter) (*AllResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method All not implemented")
+}
+func (*UnimplementedRouterServer) Lists(ctx context.Context, req *ListsParameter) (*ListsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Lists not implemented")
+}
+func (*UnimplementedRouterServer) Tunnels(ctx context.Context, req *TunnelsParameter) (*CommonResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Tunnels not implemented")
+}
+
+func RegisterRouterServer(s *grpc.Server, srv RouterServer) {
+	s.RegisterService(&_Router_serviceDesc, srv)
+}
+
+func _Router_Testing_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(TestingParameter)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RouterServer).Testing(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/Router/Testing",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RouterServer).Testing(ctx, req.(*TestingParameter))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Router_Put_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(PutParameter)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RouterServer).Put(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/Router/Put",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RouterServer).Put(ctx, req.(*PutParameter))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Router_Exec_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ExecParameter)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RouterServer).Exec(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/Router/Exec",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RouterServer).Exec(ctx, req.(*ExecParameter))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Router_Delete_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteParameter)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RouterServer).Delete(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/Router/Delete",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RouterServer).Delete(ctx, req.(*DeleteParameter))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Router_Get_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetParameter)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RouterServer).Get(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/Router/Get",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RouterServer).Get(ctx, req.(*GetParameter))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Router_All_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AllParameter)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RouterServer).All(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/Router/All",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RouterServer).All(ctx, req.(*AllParameter))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Router_Lists_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListsParameter)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RouterServer).Lists(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/Router/Lists",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RouterServer).Lists(ctx, req.(*ListsParameter))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Router_Tunnels_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(TunnelsParameter)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RouterServer).Tunnels(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/Router/Tunnels",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RouterServer).Tunnels(ctx, req.(*TunnelsParameter))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+var _Router_serviceDesc = grpc.ServiceDesc{
+	ServiceName: "Router",
+	HandlerType: (*RouterServer)(nil),
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "Testing",
+			Handler:    _Router_Testing_Handler,
+		},
+		{
+			MethodName: "Put",
+			Handler:    _Router_Put_Handler,
+		},
+		{
+			MethodName: "Exec",
+			Handler:    _Router_Exec_Handler,
+		},
+		{
+			MethodName: "Delete",
+			Handler:    _Router_Delete_Handler,
+		},
+		{
+			MethodName: "Get",
+			Handler:    _Router_Get_Handler,
+		},
+		{
+			MethodName: "All",
+			Handler:    _Router_All_Handler,
+		},
+		{
+			MethodName: "Lists",
+			Handler:    _Router_Lists_Handler,
+		},
+		{
+			MethodName: "Tunnels",
+			Handler:    _Router_Tunnels_Handler,
+		},
+	},
+	Streams:  []grpc.StreamDesc{},
+	Metadata: "router.proto",
 }
