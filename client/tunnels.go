@@ -45,8 +45,8 @@ func (c *Client) closeTunnel(identity string) {
 
 // Multiple tunnel settings
 func (c *Client) mutilTunnel(identity string, option common.TunnelOption) {
-	localAddr := common.GetAddr(option.DstIp, option.DstPort)
-	remoteAddr := common.GetAddr(option.SrcIp, option.SrcPort)
+	localAddr := common.GetAddr(option.DstIp, uint(option.DstPort))
+	remoteAddr := common.GetAddr(option.SrcIp, uint(option.SrcPort))
 	localListener, err := net.Listen("tcp", localAddr)
 	if err != nil {
 		println("<" + identity + ">:" + err.Error())

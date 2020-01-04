@@ -8,7 +8,7 @@ import (
 type Information struct {
 	Identity  string                `json:"identity"`
 	Host      string                `json:"host"`
-	Port      uint                  `json:"port"`
+	Port      uint32                `json:"port"`
 	Username  string                `json:"username"`
 	Connected string                `json:"connected"`
 	Tunnels   []common.TunnelOption `json:"tunnels"`
