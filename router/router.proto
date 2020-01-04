@@ -1,0 +1,114 @@
+syntax = "proto3";
+
+message CommonResponse {
+    uint32 error = 1;
+    string msg = 2;
+}
+
+message TestingParameter {
+    string host = 1;
+    uint32 port = 2;
+    string username = 3;
+    string password = 4;
+    string private_key = 5;
+    string passphrase = 6;
+}
+
+message PutParameter {
+    string identity = 1;
+    string host = 2;
+    uint32 port = 3;
+    string username = 4;
+    string password = 5;
+    string private_key = 6;
+    string passphrase = 7;
+}
+
+message ExecParameter {
+    string identity = 1;
+    string bash = 2;
+}
+
+message ExecResponse {
+    uint32 error = 1;
+    string data = 2;
+}
+
+message DeleteParameter {
+    string identity = 1;
+}
+
+message GetParameter {
+    string identity = 1;
+}
+
+message GetResponse {
+    uint32 error = 1;
+    Information data = 2;
+}
+
+message Information {
+    string identity = 1;
+    string host = 2;
+    uint32 port = 3;
+    string username = 4;
+    string connected = 5;
+    repeated TunnelOption tunnels = 6;
+}
+
+message TunnelOption {
+    string src_ip = 1;
+    uint32 src_port = 2;
+    string dst_ip = 3;
+    uint32 dst_port = 4;
+}
+
+message AllParameter {
+}
+
+message AllResponse {
+    uint32 error = 1;
+    repeated string data = 2;
+}
+
+message ListsParameter {
+    repeated string identity = 1;
+}
+
+message ListsResponse {
+    uint32 error = 1;
+    repeated Information data = 2;
+}
+
+message TunnelsParameter {
+    string identity = 1;
+    repeated TunnelOption tunnels = 2;
+}
+
+service Router {
+    rpc Testing (TestingParameter) returns (CommonResponse) {
+    }
+
+    rpc Put (PutParameter) returns (CommonResponse) {
+    }
+
+    rpc Exec (ExecParameter) returns (ExecResponse) {
+    }
+
+    rpc Delete (DeleteParameter) returns (CommonResponse) {
+    }
+
+    rpc Get (GetParameter) returns (GetResponse) {
+    }
+
+    rpc All (AllParameter) returns (AllResponse) {
+    }
+
+    rpc Lists (ListsParameter) returns (ListsResponse) {
+    }
+
+    rpc Tunnels (TunnelsParameter) returns (CommonResponse) {
+    }
+
+}
+
