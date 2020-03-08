@@ -19,7 +19,7 @@ func New(client *client.Client) *controller {
 	return c
 }
 
-func (c *controller) Testing(ctx context.Context, params *pb.TestingParameter) (*pb.CommonResponse, error) {
+func (c *controller) Testing(ctx context.Context, params *pb.TestingParameter) (*pb.Response, error) {
 	privateKey, err := base64.StdEncoding.DecodeString(params.PrivateKey)
 	if err != nil {
 		return nil, err
@@ -36,13 +36,13 @@ func (c *controller) Testing(ctx context.Context, params *pb.TestingParameter) (
 		return nil, err
 	}
 	defer sshClient.Close()
-	return &pb.CommonResponse{
+	return &pb.Response{
 		Error: 0,
 		Msg:   "ok",
 	}, nil
 }
 
-func (c *controller) Put(ctx context.Context, params *pb.PutParameter) (*pb.CommonResponse, error) {
+func (c *controller) Put(ctx context.Context, params *pb.PutParameter) (*pb.Response, error) {
 	privateKey, err := base64.StdEncoding.DecodeString(params.PrivateKey)
 	if err != nil {
 		return nil, err
@@ -58,7 +58,7 @@ func (c *controller) Put(ctx context.Context, params *pb.PutParameter) (*pb.Comm
 	if err != nil {
 		return nil, err
 	}
-	return &pb.CommonResponse{
+	return &pb.Response{
 		Error: 0,
 		Msg:   "ok",
 	}, nil
@@ -75,12 +75,12 @@ func (c *controller) Exec(ctx context.Context, params *pb.ExecParameter) (*pb.Ex
 	}, nil
 }
 
-func (c *controller) Delete(ctx context.Context, params *pb.DeleteParameter) (*pb.CommonResponse, error) {
+func (c *controller) Delete(ctx context.Context, params *pb.DeleteParameter) (*pb.Response, error) {
 	err := c.client.Delete(params.Identity)
 	if err != nil {
 		return nil, err
 	}
-	return &pb.CommonResponse{
+	return &pb.Response{
 		Error: 0,
 		Msg:   "ok",
 	}, nil
@@ -113,7 +113,7 @@ func (c *controller) Get(ctx context.Context, params *pb.GetParameter) (*pb.GetR
 	}, nil
 }
 
-func (c *controller) All(ctx context.Context, params *pb.AllParameter) (*pb.AllResponse, error) {
+func (c *controller) All(ctx context.Context, params *pb.NoParameter) (*pb.AllResponse, error) {
 	var keys []string
 	for key := range c.client.GetClientOptions() {
 		keys = append(keys, key)
@@ -155,7 +155,7 @@ func (c *controller) Lists(ctx context.Context, params *pb.ListsParameter) (*pb.
 	}, nil
 }
 
-func (c *controller) Tunnels(ctx context.Context, params *pb.TunnelsParameter) (*pb.CommonResponse, error) {
+func (c *controller) Tunnels(ctx context.Context, params *pb.TunnelsParameter) (*pb.Response, error) {
 	var tunnels []common.TunnelOption
 	for _, value := range params.Tunnels {
 		tunnels = append(tunnels, common.TunnelOption{
@@ -169,7 +169,7 @@ func (c *controller) Tunnels(ctx context.Context, params *pb.TunnelsParameter) (
 	if err != nil {
 		return nil, err
 	}
-	return &pb.CommonResponse{
+	return &pb.Response{
 		Error: 0,
 		Msg:   "ok",
 	}, nil

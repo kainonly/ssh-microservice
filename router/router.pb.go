@@ -24,7 +24,38 @@ var _ = math.Inf
 // proto package needs to be updated.
 const _ = proto.ProtoPackageIsVersion3 // please upgrade the proto package
 
-type CommonResponse struct {
+type NoParameter struct {
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *NoParameter) Reset()         { *m = NoParameter{} }
+func (m *NoParameter) String() string { return proto.CompactTextString(m) }
+func (*NoParameter) ProtoMessage()    {}
+func (*NoParameter) Descriptor() ([]byte, []int) {
+	return fileDescriptor_367072455c71aedc, []int{0}
+}
+
+func (m *NoParameter) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_NoParameter.Unmarshal(m, b)
+}
+func (m *NoParameter) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_NoParameter.Marshal(b, m, deterministic)
+}
+func (m *NoParameter) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_NoParameter.Merge(m, src)
+}
+func (m *NoParameter) XXX_Size() int {
+	return xxx_messageInfo_NoParameter.Size(m)
+}
+func (m *NoParameter) XXX_DiscardUnknown() {
+	xxx_messageInfo_NoParameter.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_NoParameter proto.InternalMessageInfo
+
+type Response struct {
 	Error                uint32   `protobuf:"varint,1,opt,name=error,proto3" json:"error,omitempty"`
 	Msg                  string   `protobuf:"bytes,2,opt,name=msg,proto3" json:"msg,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
@@ -32,39 +63,39 @@ type CommonResponse struct {
 	XXX_sizecache        int32    `json:"-"`
 }
 
-func (m *CommonResponse) Reset()         { *m = CommonResponse{} }
-func (m *CommonResponse) String() string { return proto.CompactTextString(m) }
-func (*CommonResponse) ProtoMessage()    {}
-func (*CommonResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_367072455c71aedc, []int{0}
+func (m *Response) Reset()         { *m = Response{} }
+func (m *Response) String() string { return proto.CompactTextString(m) }
+func (*Response) ProtoMessage()    {}
+func (*Response) Descriptor() ([]byte, []int) {
+	return fileDescriptor_367072455c71aedc, []int{1}
 }
 
-func (m *CommonResponse) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_CommonResponse.Unmarshal(m, b)
+func (m *Response) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_Response.Unmarshal(m, b)
 }
-func (m *CommonResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_CommonResponse.Marshal(b, m, deterministic)
+func (m *Response) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_Response.Marshal(b, m, deterministic)
 }
-func (m *CommonResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_CommonResponse.Merge(m, src)
+func (m *Response) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Response.Merge(m, src)
 }
-func (m *CommonResponse) XXX_Size() int {
-	return xxx_messageInfo_CommonResponse.Size(m)
+func (m *Response) XXX_Size() int {
+	return xxx_messageInfo_Response.Size(m)
 }
-func (m *CommonResponse) XXX_DiscardUnknown() {
-	xxx_messageInfo_CommonResponse.DiscardUnknown(m)
+func (m *Response) XXX_DiscardUnknown() {
+	xxx_messageInfo_Response.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_CommonResponse proto.InternalMessageInfo
+var xxx_messageInfo_Response proto.InternalMessageInfo
 
-func (m *CommonResponse) GetError() uint32 {
+func (m *Response) GetError() uint32 {
 	if m != nil {
 		return m.Error
 	}
 	return 0
 }
 
-func (m *CommonResponse) GetMsg() string {
+func (m *Response) GetMsg() string {
 	if m != nil {
 		return m.Msg
 	}
@@ -87,7 +118,7 @@ func (m *TestingParameter) Reset()         { *m = TestingParameter{} }
 func (m *TestingParameter) String() string { return proto.CompactTextString(m) }
 func (*TestingParameter) ProtoMessage()    {}
 func (*TestingParameter) Descriptor() ([]byte, []int) {
-	return fileDescriptor_367072455c71aedc, []int{1}
+	return fileDescriptor_367072455c71aedc, []int{2}
 }
 
 func (m *TestingParameter) XXX_Unmarshal(b []byte) error {
@@ -167,7 +198,7 @@ func (m *PutParameter) Reset()         { *m = PutParameter{} }
 func (m *PutParameter) String() string { return proto.CompactTextString(m) }
 func (*PutParameter) ProtoMessage()    {}
 func (*PutParameter) Descriptor() ([]byte, []int) {
-	return fileDescriptor_367072455c71aedc, []int{2}
+	return fileDescriptor_367072455c71aedc, []int{3}
 }
 
 func (m *PutParameter) XXX_Unmarshal(b []byte) error {
@@ -249,7 +280,7 @@ func (m *ExecParameter) Reset()         { *m = ExecParameter{} }
 func (m *ExecParameter) String() string { return proto.CompactTextString(m) }
 func (*ExecParameter) ProtoMessage()    {}
 func (*ExecParameter) Descriptor() ([]byte, []int) {
-	return fileDescriptor_367072455c71aedc, []int{3}
+	return fileDescriptor_367072455c71aedc, []int{4}
 }
 
 func (m *ExecParameter) XXX_Unmarshal(b []byte) error {
@@ -296,7 +327,7 @@ func (m *ExecResponse) Reset()         { *m = ExecResponse{} }
 func (m *ExecResponse) String() string { return proto.CompactTextString(m) }
 func (*ExecResponse) ProtoMessage()    {}
 func (*ExecResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_367072455c71aedc, []int{4}
+	return fileDescriptor_367072455c71aedc, []int{5}
 }
 
 func (m *ExecResponse) XXX_Unmarshal(b []byte) error {
@@ -342,7 +373,7 @@ func (m *DeleteParameter) Reset()         { *m = DeleteParameter{} }
 func (m *DeleteParameter) String() string { return proto.CompactTextString(m) }
 func (*DeleteParameter) ProtoMessage()    {}
 func (*DeleteParameter) Descriptor() ([]byte, []int) {
-	return fileDescriptor_367072455c71aedc, []int{5}
+	return fileDescriptor_367072455c71aedc, []int{6}
 }
 
 func (m *DeleteParameter) XXX_Unmarshal(b []byte) error {
@@ -381,7 +412,7 @@ func (m *GetParameter) Reset()         { *m = GetParameter{} }
 func (m *GetParameter) String() string { return proto.CompactTextString(m) }
 func (*GetParameter) ProtoMessage()    {}
 func (*GetParameter) Descriptor() ([]byte, []int) {
-	return fileDescriptor_367072455c71aedc, []int{6}
+	return fileDescriptor_367072455c71aedc, []int{7}
 }
 
 func (m *GetParameter) XXX_Unmarshal(b []byte) error {
@@ -421,7 +452,7 @@ func (m *GetResponse) Reset()         { *m = GetResponse{} }
 func (m *GetResponse) String() string { return proto.CompactTextString(m) }
 func (*GetResponse) ProtoMessage()    {}
 func (*GetResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_367072455c71aedc, []int{7}
+	return fileDescriptor_367072455c71aedc, []int{8}
 }
 
 func (m *GetResponse) XXX_Unmarshal(b []byte) error {
@@ -472,7 +503,7 @@ func (m *Information) Reset()         { *m = Information{} }
 func (m *Information) String() string { return proto.CompactTextString(m) }
 func (*Information) ProtoMessage()    {}
 func (*Information) Descriptor() ([]byte, []int) {
-	return fileDescriptor_367072455c71aedc, []int{8}
+	return fileDescriptor_367072455c71aedc, []int{9}
 }
 
 func (m *Information) XXX_Unmarshal(b []byte) error {
@@ -549,7 +580,7 @@ func (m *TunnelOption) Reset()         { *m = TunnelOption{} }
 func (m *TunnelOption) String() string { return proto.CompactTextString(m) }
 func (*TunnelOption) ProtoMessage()    {}
 func (*TunnelOption) Descriptor() ([]byte, []int) {
-	return fileDescriptor_367072455c71aedc, []int{9}
+	return fileDescriptor_367072455c71aedc, []int{10}
 }
 
 func (m *TunnelOption) XXX_Unmarshal(b []byte) error {
@@ -597,37 +628,6 @@ func (m *TunnelOption) GetDstPort() uint32 {
 	}
 	return 0
 }
-
-type AllParameter struct {
-	XXX_NoUnkeyedLiteral struct{} `json:"-"`
-	XXX_unrecognized     []byte   `json:"-"`
-	XXX_sizecache        int32    `json:"-"`
-}
-
-func (m *AllParameter) Reset()         { *m = AllParameter{} }
-func (m *AllParameter) String() string { return proto.CompactTextString(m) }
-func (*AllParameter) ProtoMessage()    {}
-func (*AllParameter) Descriptor() ([]byte, []int) {
-	return fileDescriptor_367072455c71aedc, []int{10}
-}
-
-func (m *AllParameter) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_AllParameter.Unmarshal(m, b)
-}
-func (m *AllParameter) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_AllParameter.Marshal(b, m, deterministic)
-}
-func (m *AllParameter) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_AllParameter.Merge(m, src)
-}
-func (m *AllParameter) XXX_Size() int {
-	return xxx_messageInfo_AllParameter.Size(m)
-}
-func (m *AllParameter) XXX_DiscardUnknown() {
-	xxx_messageInfo_AllParameter.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_AllParameter proto.InternalMessageInfo
 
 type AllResponse struct {
 	Error                uint32   `protobuf:"varint,1,opt,name=error,proto3" json:"error,omitempty"`
@@ -810,7 +810,8 @@ func (m *TunnelsParameter) GetTunnels() []*TunnelOption {
 }
 
 func init() {
-	proto.RegisterType((*CommonResponse)(nil), "CommonResponse")
+	proto.RegisterType((*NoParameter)(nil), "NoParameter")
+	proto.RegisterType((*Response)(nil), "Response")
 	proto.RegisterType((*TestingParameter)(nil), "TestingParameter")
 	proto.RegisterType((*PutParameter)(nil), "PutParameter")
 	proto.RegisterType((*ExecParameter)(nil), "ExecParameter")
@@ -820,7 +821,6 @@ func init() {
 	proto.RegisterType((*GetResponse)(nil), "GetResponse")
 	proto.RegisterType((*Information)(nil), "Information")
 	proto.RegisterType((*TunnelOption)(nil), "TunnelOption")
-	proto.RegisterType((*AllParameter)(nil), "AllParameter")
 	proto.RegisterType((*AllResponse)(nil), "AllResponse")
 	proto.RegisterType((*ListsParameter)(nil), "ListsParameter")
 	proto.RegisterType((*ListsResponse)(nil), "ListsResponse")
@@ -830,46 +830,46 @@ func init() {
 func init() { proto.RegisterFile("router.proto", fileDescriptor_367072455c71aedc) }
 
 var fileDescriptor_367072455c71aedc = []byte{
-	// 616 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xb4, 0x55, 0xcd, 0x6e, 0xd3, 0x40,
-	0x10, 0x4e, 0xe2, 0xc4, 0x69, 0x27, 0x76, 0x1a, 0x56, 0x54, 0x32, 0x16, 0x82, 0x68, 0x85, 0xd4,
-	0xaa, 0xa2, 0x8b, 0x54, 0x0e, 0xf4, 0x86, 0x2a, 0xa8, 0xa2, 0x0a, 0x24, 0x22, 0xab, 0x12, 0xc7,
-	0xca, 0xb5, 0x87, 0xd6, 0xc2, 0xf6, 0x5a, 0xbb, 0x1b, 0xa0, 0xcf, 0x05, 0x6f, 0xc1, 0x63, 0xf0,
-	0x22, 0x68, 0xd7, 0x8e, 0xeb, 0x94, 0xb4, 0xf1, 0x85, 0xdb, 0xfc, 0x3a, 0xdf, 0xcc, 0xb7, 0xdf,
-	0x04, 0x1c, 0xc1, 0x17, 0x0a, 0x05, 0x2b, 0x04, 0x57, 0x9c, 0x1e, 0xc3, 0xf8, 0x1d, 0xcf, 0x32,
-	0x9e, 0x07, 0x28, 0x0b, 0x9e, 0x4b, 0x24, 0x8f, 0x61, 0x80, 0x42, 0x70, 0xe1, 0x75, 0xa7, 0xdd,
-	0x7d, 0x37, 0x28, 0x1d, 0x32, 0x01, 0x2b, 0x93, 0x57, 0x5e, 0x6f, 0xda, 0xdd, 0xdf, 0x0e, 0xb4,
-	0x49, 0x7f, 0x76, 0x61, 0x72, 0x8e, 0x52, 0x25, 0xf9, 0xd5, 0x3c, 0x14, 0x61, 0x86, 0x0a, 0x05,
-	0x21, 0xd0, 0xbf, 0xe6, 0x52, 0x99, 0xde, 0xed, 0xc0, 0xd8, 0x3a, 0x56, 0x70, 0xa1, 0x4c, 0xaf,
-	0x1b, 0x18, 0x9b, 0xf8, 0xb0, 0xb5, 0x90, 0x28, 0xf2, 0x30, 0x43, 0xcf, 0x32, 0xb5, 0xb5, 0xaf,
-	0x73, 0x45, 0x28, 0xe5, 0x77, 0x2e, 0x62, 0xaf, 0x5f, 0xe6, 0x96, 0x3e, 0x79, 0x0e, 0xa3, 0x42,
-	0x24, 0xdf, 0x42, 0x85, 0x17, 0x5f, 0xf1, 0xc6, 0x1b, 0x98, 0x34, 0x54, 0xa1, 0x0f, 0x78, 0x43,
-	0x9e, 0x01, 0xe8, 0xe2, 0xe2, 0x5a, 0x84, 0x12, 0x3d, 0xbb, 0xca, 0xd7, 0x11, 0xfa, 0xbb, 0x0b,
-	0xce, 0x7c, 0xa1, 0x6e, 0x11, 0xfb, 0xb0, 0x95, 0xc4, 0x98, 0xab, 0x44, 0xdd, 0x54, 0xa8, 0x6b,
-	0xbf, 0x9e, 0xa6, 0xb7, 0x66, 0x1a, 0xeb, 0x9e, 0x69, 0xfa, 0x0f, 0x4c, 0x33, 0x78, 0x78, 0x1a,
-	0x7b, 0xc3, 0x34, 0xc3, 0x7f, 0xa6, 0x79, 0x0b, 0xee, 0xe9, 0x0f, 0x8c, 0x5a, 0x4f, 0x73, 0x19,
-	0xca, 0xeb, 0xe5, 0x34, 0xda, 0xa6, 0xc7, 0xe0, 0xe8, 0x0f, 0x6c, 0x20, 0x9f, 0x40, 0x3f, 0x0e,
-	0x55, 0xb8, 0xec, 0xd4, 0x36, 0x3d, 0x84, 0x9d, 0xf7, 0x98, 0xa2, 0xc2, 0x56, 0x3f, 0x4e, 0x0f,
-	0xc0, 0x99, 0x61, 0xbb, 0xb5, 0xd3, 0x53, 0x18, 0xcd, 0x50, 0x6d, 0xc0, 0x34, 0x6d, 0x60, 0x1a,
-	0x1d, 0x39, 0xec, 0x2c, 0xff, 0xc2, 0x45, 0x16, 0xaa, 0x84, 0xe7, 0x15, 0xc2, 0x5f, 0x5d, 0x18,
-	0x35, 0xa2, 0xff, 0x9d, 0xe9, 0xa7, 0xb0, 0x1d, 0xf1, 0x3c, 0xc7, 0x48, 0xe1, 0x92, 0xea, 0xdb,
-	0x00, 0xd9, 0x83, 0xa1, 0x5a, 0xe4, 0x39, 0xa6, 0xd2, 0xb3, 0xa7, 0xd6, 0xfe, 0xe8, 0xc8, 0x65,
-	0xe7, 0xc6, 0xff, 0x54, 0x18, 0xcc, 0xcb, 0x2c, 0x15, 0xe0, 0x34, 0x13, 0x64, 0x17, 0x6c, 0x29,
-	0xa2, 0x8b, 0xa4, 0xa8, 0x40, 0x0f, 0xa4, 0x88, 0xce, 0x0a, 0xf2, 0x04, 0xb6, 0x74, 0xb8, 0xa1,
-	0xac, 0xa1, 0x14, 0xd1, 0x5c, 0x83, 0xdc, 0x05, 0x3b, 0x96, 0x4a, 0x77, 0x94, 0xd2, 0x1a, 0xc4,
-	0x52, 0x95, 0x1d, 0x3a, 0x6c, 0x3a, 0xfa, 0x65, 0x47, 0x2c, 0x95, 0xee, 0xa0, 0x63, 0x70, 0x4e,
-	0xd2, 0xb4, 0x66, 0x87, 0xbe, 0x81, 0xd1, 0x49, 0x9a, 0xb6, 0x7e, 0x15, 0x56, 0xfd, 0x2a, 0x5e,
-	0xc2, 0xf8, 0x63, 0x22, 0x95, 0xbc, 0x8f, 0x68, 0x6b, 0x85, 0xe8, 0x19, 0xb8, 0xa6, 0xba, 0x35,
-	0xd5, 0xd6, 0x3d, 0x54, 0x7f, 0x86, 0x49, 0xb9, 0x33, 0xd9, 0x4e, 0x0a, 0x0d, 0x32, 0x7a, 0x0f,
-	0x91, 0x71, 0xf4, 0xa7, 0x07, 0x76, 0x60, 0xee, 0x25, 0x79, 0x05, 0xc3, 0xea, 0xdc, 0x91, 0x47,
-	0xec, 0xee, 0xe1, 0xf3, 0x77, 0xd8, 0xea, 0x19, 0xa5, 0x1d, 0xb2, 0x07, 0xd6, 0x7c, 0xa1, 0x88,
-	0xcb, 0x9a, 0xf7, 0x66, 0x7d, 0x61, 0x5f, 0x8b, 0x90, 0x8c, 0xd9, 0x8a, 0x98, 0x7d, 0x97, 0x35,
-	0xb5, 0x49, 0x3b, 0xe4, 0x10, 0xec, 0x52, 0x73, 0x64, 0xc2, 0xee, 0x88, 0x6f, 0xdd, 0x77, 0x5f,
-	0x80, 0x35, 0x43, 0x0d, 0xa0, 0xa9, 0x3c, 0xdf, 0x61, 0x0d, 0x71, 0x95, 0x55, 0x27, 0x69, 0x4a,
-	0x5c, 0xd6, 0x7c, 0x01, 0xbe, 0xc3, 0x1a, 0x0f, 0x80, 0x76, 0xc8, 0x01, 0x0c, 0x0c, 0x55, 0x64,
-	0x87, 0xad, 0x12, 0xec, 0x8f, 0xd9, 0x0a, 0x87, 0xb4, 0x63, 0x36, 0x55, 0xee, 0x4f, 0x6f, 0xea,
-	0x0e, 0x2f, 0x6b, 0x80, 0x5e, 0xda, 0xe6, 0xbf, 0xe8, 0xf5, 0xdf, 0x00, 0x00, 0x00, 0xff, 0xff,
-	0x31, 0x02, 0xbd, 0xa6, 0x9b, 0x06, 0x00, 0x00,
+	// 611 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xb4, 0x55, 0x5d, 0x6f, 0xd3, 0x3c,
+	0x14, 0x6e, 0x9b, 0x36, 0x6d, 0x4f, 0x92, 0xad, 0xaf, 0xf5, 0x4e, 0x0a, 0x11, 0x82, 0x62, 0x90,
+	0x36, 0x26, 0xf0, 0x45, 0xb9, 0x80, 0x3b, 0x34, 0x89, 0xa9, 0x9a, 0x40, 0x50, 0x55, 0x93, 0xb8,
+	0x9c, 0xb2, 0xe6, 0xb0, 0x45, 0xa4, 0x71, 0x64, 0xbb, 0xc0, 0x7e, 0x17, 0xfc, 0x0a, 0xf8, 0x53,
+	0xc8, 0xce, 0xc7, 0x92, 0xc1, 0xd6, 0xdc, 0x70, 0xe7, 0xf3, 0xe5, 0x9c, 0xe7, 0x3c, 0x7e, 0x4e,
+	0xc0, 0x15, 0x7c, 0xa3, 0x50, 0xb0, 0x4c, 0x70, 0xc5, 0xa9, 0x07, 0xce, 0x7b, 0xbe, 0x08, 0x45,
+	0xb8, 0x46, 0x85, 0x82, 0xce, 0x60, 0xb4, 0x44, 0x99, 0xf1, 0x54, 0x22, 0xf9, 0x1f, 0x06, 0x28,
+	0x04, 0x17, 0x7e, 0x77, 0xda, 0x3d, 0xf0, 0x96, 0xb9, 0x41, 0x26, 0x60, 0xad, 0xe5, 0x85, 0xdf,
+	0x9b, 0x76, 0x0f, 0xc6, 0x4b, 0x7d, 0xa4, 0xdf, 0xbb, 0x30, 0x39, 0x45, 0xa9, 0xe2, 0xf4, 0xa2,
+	0xba, 0x88, 0x10, 0xe8, 0x5f, 0x72, 0xa9, 0x4c, 0xed, 0x78, 0x69, 0xce, 0xda, 0x97, 0x71, 0xa1,
+	0x4c, 0xad, 0xb7, 0x34, 0x67, 0x12, 0xc0, 0x68, 0x23, 0x51, 0xa4, 0xe1, 0x1a, 0x7d, 0xcb, 0xe4,
+	0x56, 0xb6, 0x8e, 0x65, 0xa1, 0x94, 0x5f, 0xb9, 0x88, 0xfc, 0x7e, 0x1e, 0x2b, 0x6d, 0xf2, 0x10,
+	0x9c, 0x4c, 0xc4, 0x5f, 0x42, 0x85, 0x67, 0x9f, 0xf1, 0xca, 0x1f, 0x98, 0x30, 0x14, 0xae, 0xb7,
+	0x78, 0x45, 0x1e, 0x00, 0xe8, 0xe4, 0xec, 0x52, 0x84, 0x12, 0x7d, 0xbb, 0x88, 0x57, 0x1e, 0xfa,
+	0xab, 0x0b, 0xee, 0x62, 0xa3, 0xae, 0x3b, 0x0e, 0x60, 0x14, 0x47, 0x98, 0xaa, 0x58, 0x5d, 0x15,
+	0x5d, 0x57, 0x76, 0x85, 0xa6, 0xf7, 0x17, 0x34, 0xd6, 0x2d, 0x68, 0xfa, 0x77, 0xa0, 0x19, 0xdc,
+	0x8d, 0xc6, 0xde, 0x82, 0x66, 0xf8, 0x07, 0x9a, 0xd7, 0xe0, 0x1d, 0x7f, 0xc3, 0x55, 0x6b, 0x34,
+	0xe7, 0xa1, 0xbc, 0x2c, 0xd1, 0xe8, 0x33, 0x7d, 0x05, 0xae, 0xbe, 0x60, 0x0b, 0xf9, 0x04, 0xfa,
+	0x51, 0xa8, 0xc2, 0xb2, 0x52, 0x9f, 0xe9, 0x73, 0xd8, 0x7d, 0x83, 0x09, 0x2a, 0x6c, 0xf5, 0x71,
+	0x7a, 0x08, 0xee, 0x1c, 0xdb, 0x8d, 0x9d, 0x1e, 0x83, 0x33, 0x47, 0xb5, 0xa5, 0xa7, 0x69, 0xad,
+	0x27, 0x67, 0xe6, 0xb2, 0x93, 0xf4, 0x13, 0x17, 0xeb, 0x50, 0xc5, 0x3c, 0x2d, 0x3a, 0xfc, 0xd1,
+	0x05, 0xa7, 0xe6, 0xfd, 0xe7, 0x4c, 0xdf, 0x87, 0xf1, 0x8a, 0xa7, 0x29, 0xae, 0x14, 0x96, 0x54,
+	0x5f, 0x3b, 0xc8, 0x3e, 0x0c, 0xd5, 0x26, 0x4d, 0x31, 0x91, 0xbe, 0x3d, 0xb5, 0x0e, 0x9c, 0x99,
+	0xc7, 0x4e, 0x8d, 0xfd, 0x21, 0x33, 0x3d, 0x97, 0x51, 0x2a, 0xc0, 0xad, 0x07, 0xc8, 0x1e, 0xd8,
+	0x52, 0xac, 0xce, 0xe2, 0xac, 0x68, 0x7a, 0x20, 0xc5, 0xea, 0x24, 0x23, 0xf7, 0x60, 0xa4, 0xdd,
+	0x35, 0x65, 0x0d, 0xa5, 0x58, 0x2d, 0x74, 0x93, 0x7b, 0x60, 0x47, 0x52, 0xe9, 0x8a, 0x5c, 0x5a,
+	0x83, 0x48, 0xaa, 0xbc, 0x42, 0xbb, 0x4d, 0x45, 0x3f, 0xaf, 0x88, 0xa4, 0xd2, 0x15, 0xf4, 0x25,
+	0x38, 0x47, 0x49, 0xd2, 0xfa, 0x15, 0x58, 0xd5, 0x2b, 0x78, 0x06, 0x3b, 0xef, 0x62, 0xa9, 0xe4,
+	0x6d, 0xc4, 0x5a, 0x0d, 0x62, 0xe7, 0xe0, 0x99, 0xec, 0xd6, 0xd4, 0x5a, 0xb7, 0x50, 0xfb, 0x11,
+	0x26, 0xf9, 0x8c, 0x64, 0xbb, 0xa7, 0x5f, 0x1b, 0x7e, 0xef, 0xae, 0xe1, 0xcf, 0x7e, 0xf6, 0xc0,
+	0x5e, 0x9a, 0x45, 0x49, 0x9e, 0xc2, 0xb0, 0x58, 0x6f, 0xe4, 0x3f, 0x76, 0x73, 0xd1, 0x05, 0x63,
+	0x56, 0x82, 0xa0, 0x1d, 0xf2, 0x08, 0xac, 0xc5, 0x46, 0x11, 0x8f, 0xd5, 0x37, 0x4b, 0x33, 0x65,
+	0x1f, 0xfa, 0x5a, 0x68, 0x64, 0x87, 0x35, 0x04, 0x1b, 0x78, 0xac, 0xae, 0x3f, 0x93, 0x68, 0xe7,
+	0xba, 0x22, 0x13, 0x76, 0x43, 0x60, 0xcd, 0x1b, 0x9f, 0x80, 0x35, 0x47, 0xfd, 0xd1, 0xba, 0xae,
+	0x02, 0x97, 0xd5, 0xa4, 0x43, 0x3b, 0xe4, 0x31, 0x58, 0x47, 0x49, 0x42, 0x5c, 0x56, 0x5b, 0xf7,
+	0x81, 0xcb, 0x6a, 0x6c, 0xd3, 0x0e, 0x39, 0x84, 0x81, 0xe1, 0x85, 0xec, 0xb2, 0x26, 0x9b, 0xc1,
+	0x0e, 0x6b, 0x10, 0x46, 0x3b, 0x66, 0x2c, 0xf9, 0xb0, 0xf4, 0x58, 0x6e, 0x90, 0xd0, 0xe8, 0xf0,
+	0xdc, 0x36, 0xff, 0x9a, 0x17, 0xbf, 0x03, 0x00, 0x00, 0xff, 0xff, 0xb8, 0x92, 0xc4, 0x38, 0x7b,
+	0x06, 0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -884,14 +884,14 @@ const _ = grpc.SupportPackageIsVersion4
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type RouterClient interface {
-	Testing(ctx context.Context, in *TestingParameter, opts ...grpc.CallOption) (*CommonResponse, error)
-	Put(ctx context.Context, in *PutParameter, opts ...grpc.CallOption) (*CommonResponse, error)
+	Testing(ctx context.Context, in *TestingParameter, opts ...grpc.CallOption) (*Response, error)
+	Put(ctx context.Context, in *PutParameter, opts ...grpc.CallOption) (*Response, error)
 	Exec(ctx context.Context, in *ExecParameter, opts ...grpc.CallOption) (*ExecResponse, error)
-	Delete(ctx context.Context, in *DeleteParameter, opts ...grpc.CallOption) (*CommonResponse, error)
+	Delete(ctx context.Context, in *DeleteParameter, opts ...grpc.CallOption) (*Response, error)
 	Get(ctx context.Context, in *GetParameter, opts ...grpc.CallOption) (*GetResponse, error)
-	All(ctx context.Context, in *AllParameter, opts ...grpc.CallOption) (*AllResponse, error)
+	All(ctx context.Context, in *NoParameter, opts ...grpc.CallOption) (*AllResponse, error)
 	Lists(ctx context.Context, in *ListsParameter, opts ...grpc.CallOption) (*ListsResponse, error)
-	Tunnels(ctx context.Context, in *TunnelsParameter, opts ...grpc.CallOption) (*CommonResponse, error)
+	Tunnels(ctx context.Context, in *TunnelsParameter, opts ...grpc.CallOption) (*Response, error)
 }
 
 type routerClient struct {
@@ -902,8 +902,8 @@ func NewRouterClient(cc *grpc.ClientConn) RouterClient {
 	return &routerClient{cc}
 }
 
-func (c *routerClient) Testing(ctx context.Context, in *TestingParameter, opts ...grpc.CallOption) (*CommonResponse, error) {
-	out := new(CommonResponse)
+func (c *routerClient) Testing(ctx context.Context, in *TestingParameter, opts ...grpc.CallOption) (*Response, error) {
+	out := new(Response)
 	err := c.cc.Invoke(ctx, "/Router/Testing", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -911,8 +911,8 @@ func (c *routerClient) Testing(ctx context.Context, in *TestingParameter, opts .
 	return out, nil
 }
 
-func (c *routerClient) Put(ctx context.Context, in *PutParameter, opts ...grpc.CallOption) (*CommonResponse, error) {
-	out := new(CommonResponse)
+func (c *routerClient) Put(ctx context.Context, in *PutParameter, opts ...grpc.CallOption) (*Response, error) {
+	out := new(Response)
 	err := c.cc.Invoke(ctx, "/Router/Put", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -929,8 +929,8 @@ func (c *routerClient) Exec(ctx context.Context, in *ExecParameter, opts ...grpc
 	return out, nil
 }
 
-func (c *routerClient) Delete(ctx context.Context, in *DeleteParameter, opts ...grpc.CallOption) (*CommonResponse, error) {
-	out := new(CommonResponse)
+func (c *routerClient) Delete(ctx context.Context, in *DeleteParameter, opts ...grpc.CallOption) (*Response, error) {
+	out := new(Response)
 	err := c.cc.Invoke(ctx, "/Router/Delete", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -947,7 +947,7 @@ func (c *routerClient) Get(ctx context.Context, in *GetParameter, opts ...grpc.C
 	return out, nil
 }
 
-func (c *routerClient) All(ctx context.Context, in *AllParameter, opts ...grpc.CallOption) (*AllResponse, error) {
+func (c *routerClient) All(ctx context.Context, in *NoParameter, opts ...grpc.CallOption) (*AllResponse, error) {
 	out := new(AllResponse)
 	err := c.cc.Invoke(ctx, "/Router/All", in, out, opts...)
 	if err != nil {
@@ -965,8 +965,8 @@ func (c *routerClient) Lists(ctx context.Context, in *ListsParameter, opts ...gr
 	return out, nil
 }
 
-func (c *routerClient) Tunnels(ctx context.Context, in *TunnelsParameter, opts ...grpc.CallOption) (*CommonResponse, error) {
-	out := new(CommonResponse)
+func (c *routerClient) Tunnels(ctx context.Context, in *TunnelsParameter, opts ...grpc.CallOption) (*Response, error) {
+	out := new(Response)
 	err := c.cc.Invoke(ctx, "/Router/Tunnels", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -976,42 +976,42 @@ func (c *routerClient) Tunnels(ctx context.Context, in *TunnelsParameter, opts .
 
 // RouterServer is the server API for Router service.
 type RouterServer interface {
-	Testing(context.Context, *TestingParameter) (*CommonResponse, error)
-	Put(context.Context, *PutParameter) (*CommonResponse, error)
+	Testing(context.Context, *TestingParameter) (*Response, error)
+	Put(context.Context, *PutParameter) (*Response, error)
 	Exec(context.Context, *ExecParameter) (*ExecResponse, error)
-	Delete(context.Context, *DeleteParameter) (*CommonResponse, error)
+	Delete(context.Context, *DeleteParameter) (*Response, error)
 	Get(context.Context, *GetParameter) (*GetResponse, error)
-	All(context.Context, *AllParameter) (*AllResponse, error)
+	All(context.Context, *NoParameter) (*AllResponse, error)
 	Lists(context.Context, *ListsParameter) (*ListsResponse, error)
-	Tunnels(context.Context, *TunnelsParameter) (*CommonResponse, error)
+	Tunnels(context.Context, *TunnelsParameter) (*Response, error)
 }
 
 // UnimplementedRouterServer can be embedded to have forward compatible implementations.
 type UnimplementedRouterServer struct {
 }
 
-func (*UnimplementedRouterServer) Testing(ctx context.Context, req *TestingParameter) (*CommonResponse, error) {
+func (*UnimplementedRouterServer) Testing(ctx context.Context, req *TestingParameter) (*Response, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Testing not implemented")
 }
-func (*UnimplementedRouterServer) Put(ctx context.Context, req *PutParameter) (*CommonResponse, error) {
+func (*UnimplementedRouterServer) Put(ctx context.Context, req *PutParameter) (*Response, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Put not implemented")
 }
 func (*UnimplementedRouterServer) Exec(ctx context.Context, req *ExecParameter) (*ExecResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Exec not implemented")
 }
-func (*UnimplementedRouterServer) Delete(ctx context.Context, req *DeleteParameter) (*CommonResponse, error) {
+func (*UnimplementedRouterServer) Delete(ctx context.Context, req *DeleteParameter) (*Response, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Delete not implemented")
 }
 func (*UnimplementedRouterServer) Get(ctx context.Context, req *GetParameter) (*GetResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Get not implemented")
 }
-func (*UnimplementedRouterServer) All(ctx context.Context, req *AllParameter) (*AllResponse, error) {
+func (*UnimplementedRouterServer) All(ctx context.Context, req *NoParameter) (*AllResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method All not implemented")
 }
 func (*UnimplementedRouterServer) Lists(ctx context.Context, req *ListsParameter) (*ListsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Lists not implemented")
 }
-func (*UnimplementedRouterServer) Tunnels(ctx context.Context, req *TunnelsParameter) (*CommonResponse, error) {
+func (*UnimplementedRouterServer) Tunnels(ctx context.Context, req *TunnelsParameter) (*Response, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Tunnels not implemented")
 }
 
@@ -1110,7 +1110,7 @@ func _Router_Get_Handler(srv interface{}, ctx context.Context, dec func(interfac
 }
 
 func _Router_All_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(AllParameter)
+	in := new(NoParameter)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -1122,7 +1122,7 @@ func _Router_All_Handler(srv interface{}, ctx context.Context, dec func(interfac
 		FullMethod: "/Router/All",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(RouterServer).All(ctx, req.(*AllParameter))
+		return srv.(RouterServer).All(ctx, req.(*NoParameter))
 	}
 	return interceptor(ctx, in, info, handler)
 }
