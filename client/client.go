@@ -3,7 +3,6 @@ package client
 import (
 	"errors"
 	"golang.org/x/crypto/ssh"
-	"log"
 	"net"
 	"ssh-microservice/common"
 	"sync"
@@ -45,28 +44,6 @@ func InjectClient() *Client {
 	sshClient.localListener = newSafeMapListener()
 	sshClient.localConn = newSafeMapConn()
 	sshClient.remoteConn = newSafeMapConn()
-	configs, err := common.GetTemporary()
-	if err != nil {
-		log.Fatalln(err)
-	}
-	if configs.Connect != nil {
-		sshClient.options = configs.Connect
-	}
-	for identity, option := range configs.Connect {
-		err = sshClient.Put(identity, *option)
-		if err != nil {
-			log.Fatalln(err)
-		}
-	}
-	if configs.Tunnel != nil {
-		sshClient.tunnels = configs.Tunnel
-	}
-	for identity, options := range configs.Tunnel {
-		err = sshClient.SetTunnels(identity, *options)
-		if err != nil {
-			log.Fatalln(err)
-		}
-	}
 	return sshClient
 }
 
@@ -198,10 +175,6 @@ func (c *Client) Put(identity string, option common.ConnectOption) (err error) {
 		}
 	}()
 	wg.Wait()
-	err = common.SetTemporary(common.ConfigOption{
-		Connect: c.options,
-		Tunnel:  c.tunnels,
-	})
 	return
 }
 
@@ -261,10 +234,6 @@ func (c *Client) Delete(identity string) (err error) {
 	}
 	delete(c.runtime, identity)
 	delete(c.options, identity)
-	err = common.SetTemporary(common.ConfigOption{
-		Connect: c.options,
-		Tunnel:  c.tunnels,
-	})
 	return
 }
 
@@ -281,10 +250,6 @@ func (c *Client) SetTunnels(identity string, options []common.TunnelOption) (err
 	for _, tunnel := range options {
 		go c.mutilTunnel(identity, tunnel)
 	}
-	err = common.SetTemporary(common.ConfigOption{
-		Connect: c.options,
-		Tunnel:  c.tunnels,
-	})
 	return
 }
 
