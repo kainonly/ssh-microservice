@@ -12,7 +12,6 @@ import (
 
 func main() {
 	server := grpc.NewServer()
-	common.InitLevelDB("data")
 	common.InitBufPool()
 	pb.RegisterRouterServer(
 		server,
