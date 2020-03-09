@@ -122,13 +122,14 @@ func (c *controller) Get(ctx context.Context, params *pb.GetParameter) (*pb.GetR
 }
 
 func (c *controller) All(ctx context.Context, params *pb.NoParameter) (*pb.AllResponse, error) {
-	var keys []string
-	for key := range c.client.GetClientOptions() {
-		keys = append(keys, key)
-	}
+	// TODO:待修改
+	//var keys []string
+	//for key := range c.client.GetClientOptions() {
+	//	keys = append(keys, key)
+	//}
 	return &pb.AllResponse{
 		Error: 0,
-		Data:  keys,
+		Data:  nil,
 	}, nil
 }
 
