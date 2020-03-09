@@ -92,8 +92,7 @@ func (c *Client) Testing(option common.ConnectOption) (*ssh.Client, error) {
 
 // Add or modify the ssh client
 func (c *Client) Put(identity string, option common.ConnectOption) (err error) {
-	err = c.Delete(identity)
-	if err != nil {
+	if err = c.Delete(identity); err != nil {
 		return
 	}
 	if c.tunnels[identity] != nil {
@@ -137,21 +136,36 @@ func (c *Client) Exec(identity string, cmd string) (output []byte, err error) {
 }
 
 // Get ssh client information
-func (c *Client) Get(identity string) (lists map[string]interface{}, err error) {
-	if err = c.empty(identity); err != nil {
+func (c *Client) GetConnectOption(identity string) (option *common.ConnectOption, err error) {
+	if err := c.empty(identity); err != nil {
 		return
 	}
-	option := c.options[identity]
-	tunnels := *c.tunnels[identity]
-	lists = map[string]interface{}{
-		"Identity":  identity,
-		"Host":      option.Host,
-		"Port":      option.Port,
-		"Username":  option.Username,
-		"Connected": string(c.runtime[identity].ClientVersion()),
-		"Tunnels":   tunnels,
-	}
+	option = c.options[identity]
 	return
+}
+
+func (c *Client) GetRuntime(identity string) (client *ssh.Client, err error) {
+	if err := c.empty(identity); err != nil {
+		return
+	}
+	client = c.runtime[identity]
+	return
+}
+
+func (c *Client) GetTunnelOption(identity string) (option []common.TunnelOption, err error) {
+	if err := c.empty(identity); err != nil {
+		return
+	}
+	option = *c.tunnels[identity]
+	return
+}
+
+func (c *Client) All() []string {
+	var keys []string
+	for key := range c.options {
+		keys = append(keys, key)
+	}
+	return keys
 }
 
 // Delete ssh client
