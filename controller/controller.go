@@ -19,18 +19,18 @@ func New(client *client.Client) *controller {
 	return c
 }
 
-func (c *controller) Testing(ctx context.Context, params *pb.TestingParameter) (*pb.Response, error) {
-	privateKey, err := base64.StdEncoding.DecodeString(params.PrivateKey)
+func (c *controller) Testing(ctx context.Context, req *pb.TestingParameter) (*pb.Response, error) {
+	privateKey, err := base64.StdEncoding.DecodeString(req.PrivateKey)
 	if err != nil {
 		return nil, err
 	}
 	cli, err := c.client.Testing(common.ConnectOption{
-		Host:       params.Host,
-		Port:       params.Port,
-		Username:   params.Username,
-		Password:   params.Password,
+		Host:       req.Host,
+		Port:       req.Port,
+		Username:   req.Username,
+		Password:   req.Password,
 		Key:        privateKey,
-		PassPhrase: []byte(params.Passphrase),
+		PassPhrase: []byte(req.Passphrase),
 	})
 	if err != nil {
 		return &pb.Response{
@@ -45,18 +45,18 @@ func (c *controller) Testing(ctx context.Context, params *pb.TestingParameter) (
 	}, nil
 }
 
-func (c *controller) Put(ctx context.Context, params *pb.PutParameter) (*pb.Response, error) {
-	privateKey, err := base64.StdEncoding.DecodeString(params.PrivateKey)
+func (c *controller) Put(ctx context.Context, req *pb.PutParameter) (*pb.Response, error) {
+	privateKey, err := base64.StdEncoding.DecodeString(req.PrivateKey)
 	if err != nil {
 		return nil, err
 	}
-	err = c.client.Put(params.Identity, common.ConnectOption{
-		Host:       params.Host,
-		Port:       params.Port,
-		Username:   params.Username,
-		Password:   params.Password,
+	err = c.client.Put(req.Identity, common.ConnectOption{
+		Host:       req.Host,
+		Port:       req.Port,
+		Username:   req.Username,
+		Password:   req.Password,
 		Key:        privateKey,
-		PassPhrase: []byte(params.Passphrase),
+		PassPhrase: []byte(req.Passphrase),
 	})
 	if err != nil {
 		return nil, err
@@ -85,88 +85,115 @@ func (c *controller) Delete(ctx context.Context, params *pb.DeleteParameter) (*p
 			Error: 1,
 			Msg:   err.Error(),
 		}, nil
-	} else {
-		return &pb.Response{
-			Error: 0,
-			Msg:   "ok",
-		}, nil
 	}
+	return &pb.Response{
+		Error: 0,
+		Msg:   "ok",
+	}, nil
 }
 
-func (c *controller) Get(ctx context.Context, params *pb.GetParameter) (*pb.GetResponse, error) {
-	// TODO:待修改
-	data, err := c.client.Get(params.Identity)
+func (c *controller) Get(ctx context.Context, req *pb.GetParameter) (response *pb.GetResponse, err error) {
+	connect, err := c.client.GetConnectOption(req.Identity)
 	if err != nil {
-		return nil, err
+		return &pb.GetResponse{
+			Error: 1,
+			Msg:   err.Error(),
+		}, nil
 	}
-	var tunnels []*pb.TunnelOption
-	for _, value := range data.Tunnels {
-		tunnels = append(tunnels, &pb.TunnelOption{
-			SrcIp:   value.SrcIp,
-			SrcPort: value.SrcPort,
-			DstIp:   value.DstIp,
-			DstPort: value.DstPort,
+	cli, err := c.client.GetRuntime(req.Identity)
+	if err != nil {
+		return &pb.GetResponse{
+			Error: 1,
+			Msg:   err.Error(),
+		}, nil
+	}
+	tunnel, err := c.client.GetTunnelOption(req.Identity)
+	if err != nil {
+		return &pb.GetResponse{
+			Error: 1,
+			Msg:   err.Error(),
+		}, nil
+	}
+	var pbTunnelOption []*pb.TunnelOption
+	for _, option := range tunnel {
+		pbTunnelOption = append(pbTunnelOption, &pb.TunnelOption{
+			SrcIp:   option.SrcIp,
+			SrcPort: option.SrcPort,
+			DstIp:   option.DstIp,
+			DstPort: option.DstPort,
 		})
 	}
 	return &pb.GetResponse{
 		Error: 0,
 		Data: &pb.Information{
-			Identity:  data.Identity,
-			Host:      data.Host,
-			Port:      data.Port,
-			Username:  data.Username,
-			Connected: data.Connected,
-			Tunnels:   tunnels,
+			Identity:  req.Identity,
+			Host:      connect.Host,
+			Port:      connect.Port,
+			Username:  connect.Username,
+			Connected: string(cli.ClientVersion()),
+			Tunnels:   pbTunnelOption,
 		},
 	}, nil
 }
 
-func (c *controller) All(ctx context.Context, params *pb.NoParameter) (*pb.AllResponse, error) {
-	// TODO:待修改
-	//var keys []string
-	//for key := range c.client.GetClientOptions() {
-	//	keys = append(keys, key)
-	//}
-	return &pb.AllResponse{
-		Error: 0,
-		Data:  nil,
-	}, nil
-}
-
-func (c *controller) Lists(ctx context.Context, params *pb.ListsParameter) (*pb.ListsResponse, error) {
+func (c *controller) Lists(ctx context.Context, req *pb.ListsParameter) (*pb.ListsResponse, error) {
 	var lists []*pb.Information
-	for _, identity := range params.Identity {
-		data, err := c.client.Get(identity)
+	for _, identity := range req.Identity {
+		connect, err := c.client.GetConnectOption(identity)
 		if err != nil {
-			return nil, err
+			return &pb.ListsResponse{
+				Error: 1,
+				Msg:   err.Error(),
+			}, nil
 		}
-		var tunnels []*pb.TunnelOption
-		for _, value := range data.Tunnels {
-			tunnels = append(tunnels, &pb.TunnelOption{
-				SrcIp:   value.SrcIp,
-				SrcPort: value.SrcPort,
-				DstIp:   value.DstIp,
-				DstPort: value.DstPort,
+		cli, err := c.client.GetRuntime(identity)
+		if err != nil {
+			return &pb.ListsResponse{
+				Error: 1,
+				Msg:   err.Error(),
+			}, nil
+		}
+		tunnel, err := c.client.GetTunnelOption(identity)
+		if err != nil {
+			return &pb.ListsResponse{
+				Error: 1,
+				Msg:   err.Error(),
+			}, nil
+		}
+		var pbTunnelOption []*pb.TunnelOption
+		for _, option := range tunnel {
+			pbTunnelOption = append(pbTunnelOption, &pb.TunnelOption{
+				SrcIp:   option.SrcIp,
+				SrcPort: option.SrcPort,
+				DstIp:   option.DstIp,
+				DstPort: option.DstPort,
 			})
 		}
 		lists = append(lists, &pb.Information{
-			Identity:  data.Identity,
-			Host:      data.Host,
-			Port:      data.Port,
-			Username:  data.Username,
-			Connected: data.Connected,
-			Tunnels:   tunnels,
+			Identity:  identity,
+			Host:      connect.Host,
+			Port:      connect.Port,
+			Username:  connect.Username,
+			Connected: string(cli.ClientVersion()),
+			Tunnels:   pbTunnelOption,
 		})
 	}
 	return &pb.ListsResponse{
 		Error: 0,
-		Data:  nil,
+		Data:  lists,
 	}, nil
 }
 
-func (c *controller) Tunnels(ctx context.Context, params *pb.TunnelsParameter) (*pb.Response, error) {
+func (c *controller) All(ctx context.Context, req *pb.NoParameter) (*pb.AllResponse, error) {
+	return &pb.AllResponse{
+		Error: 0,
+		Data:  c.client.All(),
+	}, nil
+}
+
+func (c *controller) Tunnels(ctx context.Context, req *pb.TunnelsParameter) (*pb.Response, error) {
 	var tunnels []common.TunnelOption
-	for _, value := range params.Tunnels {
+	for _, value := range req.Tunnels {
 		tunnels = append(tunnels, common.TunnelOption{
 			SrcIp:   value.SrcIp,
 			SrcPort: value.SrcPort,
@@ -174,7 +201,7 @@ func (c *controller) Tunnels(ctx context.Context, params *pb.TunnelsParameter) (
 			DstPort: value.DstPort,
 		})
 	}
-	err := c.client.SetTunnels(params.Identity, tunnels)
+	err := c.client.SetTunnels(req.Identity, tunnels)
 	if err != nil {
 		return nil, err
 	}

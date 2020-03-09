@@ -1,5 +1,31 @@
 syntax = "proto3";
 
+service Router {
+    rpc Testing (TestingParameter) returns (Response) {
+    }
+
+    rpc Put (PutParameter) returns (Response) {
+    }
+
+    rpc Exec (ExecParameter) returns (ExecResponse) {
+    }
+
+    rpc Delete (DeleteParameter) returns (Response) {
+    }
+
+    rpc Get (GetParameter) returns (GetResponse) {
+    }
+
+    rpc All (NoParameter) returns (AllResponse) {
+    }
+
+    rpc Lists (ListsParameter) returns (ListsResponse) {
+    }
+
+    rpc Tunnels (TunnelsParameter) returns (Response) {
+    }
+}
+
 message NoParameter {
 }
 
@@ -34,7 +60,8 @@ message ExecParameter {
 
 message ExecResponse {
     uint32 error = 1;
-    string data = 2;
+    string msg = 2;
+    string data = 3;
 }
 
 message DeleteParameter {
@@ -47,7 +74,8 @@ message GetParameter {
 
 message GetResponse {
     uint32 error = 1;
-    Information data = 2;
+    string msg = 2;
+    Information data = 3;
 }
 
 message Information {
@@ -68,7 +96,8 @@ message TunnelOption {
 
 message AllResponse {
     uint32 error = 1;
-    repeated string data = 2;
+    string msg = 2;
+    repeated string data = 3;
 }
 
 message ListsParameter {
@@ -77,37 +106,12 @@ message ListsParameter {
 
 message ListsResponse {
     uint32 error = 1;
-    repeated Information data = 2;
+    string msg = 2;
+    repeated Information data = 3;
 }
 
 message TunnelsParameter {
     string identity = 1;
     repeated TunnelOption tunnels = 2;
-}
-
-service Router {
-    rpc Testing (TestingParameter) returns (Response) {
-    }
-
-    rpc Put (PutParameter) returns (Response) {
-    }
-
-    rpc Exec (ExecParameter) returns (ExecResponse) {
-    }
-
-    rpc Delete (DeleteParameter) returns (Response) {
-    }
-
-    rpc Get (GetParameter) returns (GetResponse) {
-    }
-
-    rpc All (NoParameter) returns (AllResponse) {
-    }
-
-    rpc Lists (ListsParameter) returns (ListsResponse) {
-    }
-
-    rpc Tunnels (TunnelsParameter) returns (Response) {
-    }
 }
 
