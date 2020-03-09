@@ -6,40 +6,37 @@ import (
 	"sync"
 )
 
-type (
-	ConnectOption struct {
-		Host       string `json:"host"`
-		Port       uint32 `json:"port"`
-		Username   string `json:"username"`
-		Password   string `json:"password"`
-		Key        []byte `json:"key"`
-		PassPhrase []byte `json:"pass_phrase"`
-	}
-	ConnectOptionWithIdentity struct {
-		Identity string `json:"identity"`
-		ConnectOption
-	}
-	TunnelOption struct {
-		SrcIp   string `json:"src_ip" validate:"required,ip"`
-		SrcPort uint32 `json:"src_port" validate:"required,numeric"`
-		DstIp   string `json:"dst_ip" validate:"required,ip"`
-		DstPort uint32 `json:"dst_port" validate:"required,numeric"`
-	}
-	ConfigOption struct {
-		Connect map[string]*ConnectOption  `json:"connect"`
-		Tunnel  map[string]*[]TunnelOption `json:"tunnel"`
-	}
-)
-
 var (
 	bufpool *sync.Pool
 )
 
+type (
+	AppOption struct {
+		Debug  bool   `yaml:"debug"`
+		Listen string `yaml:"listen"`
+		Pool   uint32 `yaml:"pool"`
+	}
+	ConnectOption struct {
+		Host       string
+		Port       uint32
+		Username   string
+		Password   string
+		Key        []byte
+		PassPhrase []byte
+	}
+	TunnelOption struct {
+		SrcIp   string
+		SrcPort uint32
+		DstIp   string
+		DstPort uint32
+	}
+)
+
 // Init buffer pool
-func InitBufPool() {
+func InitBufPool(size uint32) {
 	bufpool = &sync.Pool{}
 	bufpool.New = func() interface{} {
-		return make([]byte, 64*1024)
+		return make([]byte, size*1024)
 	}
 }
 

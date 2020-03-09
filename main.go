@@ -2,8 +2,12 @@ package main
 
 import (
 	"google.golang.org/grpc"
+	"gopkg.in/yaml.v2"
+	"io/ioutil"
 	"log"
 	"net"
+	"net/http"
+	"os"
 	"ssh-microservice/client"
 	"ssh-microservice/common"
 	"ssh-microservice/controller"
@@ -11,15 +15,33 @@ import (
 )
 
 func main() {
+	if _, err := os.Stat("./config/autoload"); os.IsNotExist(err) {
+		os.Mkdir("./config/autoload", os.ModeDir)
+	}
+	in, err := ioutil.ReadFile("./config/config.yml")
+	if err != nil {
+		log.Fatalln(err)
+	}
+	cfg := common.AppOption{}
+	err = yaml.Unmarshal(in, &cfg)
+	if err != nil {
+		log.Fatalln(err)
+	}
+	if cfg.Debug {
+		go func() {
+			http.ListenAndServe(":6060", nil)
+		}()
+	}
+	common.InitBufPool(cfg.Pool)
+	cli := client.Create()
+	listen, err := net.Listen("tcp", cfg.Listen)
+	if err != nil {
+		log.Fatalln(err)
+	}
 	server := grpc.NewServer()
-	common.InitBufPool()
 	pb.RegisterRouterServer(
 		server,
-		controller.New(client.InjectClient()),
+		controller.New(cli),
 	)
-	listen, err := net.Listen("tcp", ":6060")
-	if err != nil {
-		log.Fatalf("failed to listen: %v", err)
-	}
 	server.Serve(listen)
 }
