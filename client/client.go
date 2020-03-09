@@ -8,23 +8,16 @@ import (
 	"sync"
 )
 
+type Client struct {
+	options       map[string]*common.ConnectOption
+	tunnels       map[string]*[]common.TunnelOption
+	runtime       map[string]*ssh.Client
+	localListener *safeMapListener
+	localConn     *safeMapConn
+	remoteConn    *safeMapConn
+}
+
 type (
-	Client struct {
-		options       map[string]*common.ConnectOption
-		tunnels       map[string]*[]common.TunnelOption
-		runtime       map[string]*ssh.Client
-		localListener *safeMapListener
-		localConn     *safeMapConn
-		remoteConn    *safeMapConn
-	}
-	safeMapListener struct {
-		sync.RWMutex
-		Map map[string]map[string]*net.Listener
-	}
-	safeMapConn struct {
-		sync.RWMutex
-		Map map[string]map[string]*net.Conn
-	}
 	Information struct {
 		Identity  string                `json:"identity"`
 		Host      string                `json:"host"`
@@ -35,62 +28,16 @@ type (
 	}
 )
 
-// Inject ssh client service
-func InjectClient() *Client {
-	sshClient := new(Client)
-	sshClient.options = make(map[string]*common.ConnectOption)
-	sshClient.tunnels = make(map[string]*[]common.TunnelOption)
-	sshClient.runtime = make(map[string]*ssh.Client)
-	sshClient.localListener = newSafeMapListener()
-	sshClient.localConn = newSafeMapConn()
-	sshClient.remoteConn = newSafeMapConn()
-	return sshClient
-}
-
-func newSafeMapListener() *safeMapListener {
-	listener := new(safeMapListener)
-	listener.Map = make(map[string]map[string]*net.Listener)
-	return listener
-}
-
-func (s *safeMapListener) Clear(identity string) {
-	s.Map[identity] = make(map[string]*net.Listener)
-}
-
-func (s *safeMapListener) Get(identity string, addr string) *net.Listener {
-	s.RLock()
-	listener := s.Map[identity][addr]
-	s.RUnlock()
-	return listener
-}
-
-func (s *safeMapListener) Set(identity string, addr string, listener *net.Listener) {
-	s.Lock()
-	s.Map[identity][addr] = listener
-	s.Unlock()
-}
-
-func newSafeMapConn() *safeMapConn {
-	listener := new(safeMapConn)
-	listener.Map = make(map[string]map[string]*net.Conn)
-	return listener
-}
-
-func (s *safeMapConn) Clear(identity string) {
-	s.Map[identity] = make(map[string]*net.Conn)
-}
-
-func (s *safeMapConn) Get(identity string, addr string) *net.Conn {
-	s.RLock()
-	conn := s.Map[identity][addr]
-	s.RUnlock()
-	return conn
-}
-
-func (s *safeMapConn) Set(identity string, addr string, conn *net.Conn) {
-	s.Lock()
-	s.Map[identity][addr] = conn
-	s.Unlock()
+// Create ssh client service
+func Create() *Client {
+	client := new(Client)
+	client.options = make(map[string]*common.ConnectOption)
+	client.tunnels = make(map[string]*[]common.TunnelOption)
+	client.runtime = make(map[string]*ssh.Client)
+	client.localListener = newSafeMapListener()
+	client.localConn = newSafeMapConn()
+	client.remoteConn = newSafeMapConn()
+	return client
 }
 
 // Get Client Options

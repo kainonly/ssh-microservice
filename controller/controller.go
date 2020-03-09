@@ -24,7 +24,7 @@ func (c *controller) Testing(ctx context.Context, params *pb.TestingParameter) (
 	if err != nil {
 		return nil, err
 	}
-	sshClient, err := c.client.Testing(common.ConnectOption{
+	cli, err := c.client.Testing(common.ConnectOption{
 		Host:       params.Host,
 		Port:       params.Port,
 		Username:   params.Username,
@@ -33,9 +33,12 @@ func (c *controller) Testing(ctx context.Context, params *pb.TestingParameter) (
 		PassPhrase: []byte(params.Passphrase),
 	})
 	if err != nil {
-		return nil, err
+		return &pb.Response{
+			Error: 1,
+			Msg:   err.Error(),
+		}, nil
 	}
-	defer sshClient.Close()
+	defer cli.Close()
 	return &pb.Response{
 		Error: 0,
 		Msg:   "ok",
@@ -78,15 +81,20 @@ func (c *controller) Exec(ctx context.Context, params *pb.ExecParameter) (*pb.Ex
 func (c *controller) Delete(ctx context.Context, params *pb.DeleteParameter) (*pb.Response, error) {
 	err := c.client.Delete(params.Identity)
 	if err != nil {
-		return nil, err
+		return &pb.Response{
+			Error: 1,
+			Msg:   err.Error(),
+		}, nil
+	} else {
+		return &pb.Response{
+			Error: 0,
+			Msg:   "ok",
+		}, nil
 	}
-	return &pb.Response{
-		Error: 0,
-		Msg:   "ok",
-	}, nil
 }
 
 func (c *controller) Get(ctx context.Context, params *pb.GetParameter) (*pb.GetResponse, error) {
+	// TODO:待修改
 	data, err := c.client.Get(params.Identity)
 	if err != nil {
 		return nil, err
