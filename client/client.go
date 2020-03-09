@@ -17,17 +17,6 @@ type Client struct {
 	remoteConn    *safeMapConn
 }
 
-type (
-	Information struct {
-		Identity  string                `json:"identity"`
-		Host      string                `json:"host"`
-		Port      uint32                `json:"port"`
-		Username  string                `json:"username"`
-		Connected string                `json:"connected"`
-		Tunnels   []common.TunnelOption `json:"tunnels"`
-	}
-)
-
 // Create ssh client service
 func Create() *Client {
 	client := new(Client)
@@ -40,13 +29,8 @@ func Create() *Client {
 	return client
 }
 
-// Get Client Options
-func (c *Client) GetClientOptions() map[string]*common.ConnectOption {
-	return c.options
-}
-
-// Generate AuthMethod
-func (c *Client) authMethod(option common.ConnectOption) (auth []ssh.AuthMethod, err error) {
+// Generate Auth Method
+func (c *Client) auth(option common.ConnectOption) (auth []ssh.AuthMethod, err error) {
 	if option.Key == nil {
 		// Password AuthMethod
 		auth = []ssh.AuthMethod{
@@ -80,7 +64,7 @@ func (c *Client) authMethod(option common.ConnectOption) (auth []ssh.AuthMethod,
 
 // Ssh client connection
 func (c *Client) connect(option common.ConnectOption) (client *ssh.Client, err error) {
-	auth, err := c.authMethod(option)
+	auth, err := c.auth(option)
 	if err != nil {
 		return
 	}
@@ -94,8 +78,15 @@ func (c *Client) connect(option common.ConnectOption) (client *ssh.Client, err e
 	return
 }
 
+func (c *Client) empty(identity string) error {
+	if c.options[identity] == nil || c.runtime[identity] == nil {
+		return errors.New("this identity does not exists")
+	}
+	return nil
+}
+
 // Test ssh client connection
-func (c *Client) Testing(option common.ConnectOption) (sshClient *ssh.Client, err error) {
+func (c *Client) Testing(option common.ConnectOption) (*ssh.Client, error) {
 	return c.connect(option)
 }
 
@@ -127,8 +118,7 @@ func (c *Client) Put(identity string, option common.ConnectOption) (err error) {
 
 // Remotely execute commands via SSH
 func (c *Client) Exec(identity string, cmd string) (output []byte, err error) {
-	if c.options[identity] == nil || c.runtime[identity] == nil {
-		err = errors.New("this identity does not exists")
+	if err = c.empty(identity); err != nil {
 		return
 	}
 	var wg sync.WaitGroup
@@ -147,30 +137,26 @@ func (c *Client) Exec(identity string, cmd string) (output []byte, err error) {
 }
 
 // Get ssh client information
-func (c *Client) Get(identity string) (content Information, err error) {
-	if c.options[identity] == nil || c.runtime[identity] == nil {
-		err = errors.New("this identity does not exists")
+func (c *Client) Get(identity string) (lists map[string]interface{}, err error) {
+	if err = c.empty(identity); err != nil {
 		return
 	}
 	option := c.options[identity]
-	var tunnels []common.TunnelOption
-	if c.tunnels[identity] != nil {
-		tunnels = *c.tunnels[identity]
-	}
-	content = Information{
-		Identity:  identity,
-		Host:      option.Host,
-		Port:      option.Port,
-		Username:  option.Username,
-		Connected: string(c.runtime[identity].ClientVersion()),
-		Tunnels:   tunnels,
+	tunnels := *c.tunnels[identity]
+	lists = map[string]interface{}{
+		"Identity":  identity,
+		"Host":      option.Host,
+		"Port":      option.Port,
+		"Username":  option.Username,
+		"Connected": string(c.runtime[identity].ClientVersion()),
+		"Tunnels":   tunnels,
 	}
 	return
 }
 
 // Delete ssh client
 func (c *Client) Delete(identity string) (err error) {
-	if c.options[identity] == nil || c.runtime[identity] == nil {
+	if err = c.empty(identity); err != nil {
 		return
 	}
 	if c.tunnels[identity] != nil {
@@ -186,8 +172,7 @@ func (c *Client) Delete(identity string) (err error) {
 
 // Tunnel setting
 func (c *Client) SetTunnels(identity string, options []common.TunnelOption) (err error) {
-	if c.options[identity] == nil || c.runtime[identity] == nil {
-		err = errors.New("this identity does not exists")
+	if err = c.empty(identity); err != nil {
 		return
 	}
 	if c.tunnels[identity] != nil {
