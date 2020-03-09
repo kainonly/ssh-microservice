@@ -137,7 +137,7 @@ func (c *Client) Exec(identity string, cmd string) (output []byte, err error) {
 
 // Get ssh client information
 func (c *Client) GetConnectOption(identity string) (option *common.ConnectOption, err error) {
-	if err := c.empty(identity); err != nil {
+	if err = c.empty(identity); err != nil {
 		return
 	}
 	option = c.options[identity]
@@ -145,7 +145,7 @@ func (c *Client) GetConnectOption(identity string) (option *common.ConnectOption
 }
 
 func (c *Client) GetRuntime(identity string) (client *ssh.Client, err error) {
-	if err := c.empty(identity); err != nil {
+	if err = c.empty(identity); err != nil {
 		return
 	}
 	client = c.runtime[identity]
@@ -153,7 +153,7 @@ func (c *Client) GetRuntime(identity string) (client *ssh.Client, err error) {
 }
 
 func (c *Client) GetTunnelOption(identity string) (option []common.TunnelOption, err error) {
-	if err := c.empty(identity); err != nil {
+	if err = c.empty(identity); err != nil {
 		return
 	}
 	option = *c.tunnels[identity]

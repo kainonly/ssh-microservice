@@ -22,15 +22,19 @@ func New(client *client.Client) *controller {
 func (c *controller) Testing(ctx context.Context, req *pb.TestingParameter) (*pb.Response, error) {
 	privateKey, err := base64.StdEncoding.DecodeString(req.PrivateKey)
 	if err != nil {
-		return nil, err
+		return &pb.Response{
+			Error: 1,
+			Msg:   err.Error(),
+		}, nil
 	}
+	println(privateKey)
 	cli, err := c.client.Testing(common.ConnectOption{
 		Host:       req.Host,
 		Port:       req.Port,
 		Username:   req.Username,
 		Password:   req.Password,
 		Key:        privateKey,
-		PassPhrase: []byte(req.Passphrase),
+		PassPhrase: []byte(nil),
 	})
 	if err != nil {
 		return &pb.Response{
