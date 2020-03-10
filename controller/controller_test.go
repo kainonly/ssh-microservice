@@ -78,7 +78,7 @@ func TestConnect(t *testing.T) {
 	if response.Error != 0 {
 		t.Error(response.Msg)
 	}
-	println(string(response.Msg))
+	logrus.Info(response.Msg)
 }
 
 func TestPut(t *testing.T) {
@@ -102,7 +102,7 @@ func TestPut(t *testing.T) {
 	if response.Error != 0 {
 		t.Error(response.Msg)
 	}
-	println(string(response.Msg))
+	logrus.Info(response.Msg)
 }
 
 func TestExec(t *testing.T) {
@@ -121,7 +121,7 @@ func TestExec(t *testing.T) {
 	if response.Error != 0 {
 		t.Error(response.Msg)
 	}
-	println(string(response.Data))
+	logrus.Info(response.Msg)
 }
 
 func TestDelete(t *testing.T) {
@@ -139,7 +139,7 @@ func TestDelete(t *testing.T) {
 	if response.Error != 0 {
 		t.Error(response.Msg)
 	}
-	println(string(response.Msg))
+	logrus.Info(response.Msg)
 }
 
 func TestGet(t *testing.T) {
@@ -158,4 +158,64 @@ func TestGet(t *testing.T) {
 		t.Error(response.Msg)
 	}
 	logrus.Info(response.Data)
+}
+
+func TestLists(t *testing.T) {
+	defer conn.Close()
+	client := pb.NewRouterClient(conn)
+	response, err := client.Lists(
+		context.Background(),
+		&pb.ListsParameter{
+			Identity: []string{"test"},
+		},
+	)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if response.Error != 0 {
+		t.Error(response.Msg)
+	}
+	logrus.Info(response.Data)
+}
+
+func TestAll(t *testing.T) {
+	defer conn.Close()
+	client := pb.NewRouterClient(conn)
+	response, err := client.All(
+		context.Background(),
+		&pb.NoParameter{},
+	)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if response.Error != 0 {
+		t.Error(response.Msg)
+	}
+	logrus.Info(response.Data)
+}
+
+func TestTunnels(t *testing.T) {
+	defer conn.Close()
+	client := pb.NewRouterClient(conn)
+	response, err := client.Tunnels(
+		context.Background(),
+		&pb.TunnelsParameter{
+			Identity: "test",
+			Tunnels: []*pb.TunnelOption{
+				&pb.TunnelOption{
+					SrcIp:   "127.0.0.1",
+					SrcPort: 80,
+					DstIp:   "127.0.0.1",
+					DstPort: 8080,
+				},
+			},
+		},
+	)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if response.Error != 0 {
+		t.Error(response.Msg)
+	}
+	logrus.Info(response.Msg)
 }
