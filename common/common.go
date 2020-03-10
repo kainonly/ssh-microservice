@@ -1,7 +1,11 @@
 package common
 
 import (
+	"gopkg.in/yaml.v2"
 	"io"
+	"io/ioutil"
+	"os"
+	"path/filepath"
 	"strconv"
 	"sync"
 )
@@ -25,10 +29,19 @@ type (
 		PassPhrase []byte
 	}
 	TunnelOption struct {
-		SrcIp   string
-		SrcPort uint32
-		DstIp   string
-		DstPort uint32
+		SrcIp   string `yaml:"src_ip"`
+		SrcPort uint32 `yaml:"src_port"`
+		DstIp   string `yaml:"dst_ip"`
+		DstPort uint32 `yaml:"dst_port"`
+	}
+	ConfigOption struct {
+		Host       string         `yaml:"host"`
+		Port       uint32         `yaml:"port"`
+		Username   string         `yaml:"username"`
+		Password   string         `yaml:"password"`
+		Key        string         `yaml:"key"`
+		PassPhrase string         `yaml:"pass_phrase"`
+		Tunnels    []TunnelOption `yaml:"tunnels"`
 	}
 )
 
@@ -81,4 +94,54 @@ func Copy(dst io.Writer, src io.Reader) (written int64, err error) {
 // Get Addr
 func GetAddr(ip string, port uint) string {
 	return ip + ":" + strconv.Itoa(int(port))
+}
+
+func autoload(identity string) string {
+	return "./config/autoload/" + identity + ".yml"
+}
+
+func ListConfig() (list []ConfigOption, err error) {
+	var files []os.FileInfo
+	files, err = ioutil.ReadDir("./config/autoload")
+	if err != nil {
+		return
+	}
+	for _, file := range files {
+		ext := filepath.Ext(file.Name())
+		if ext == ".yml" {
+			var in []byte
+			in, err = ioutil.ReadFile("./config/autoload/" + file.Name())
+			if err != nil {
+				return
+			}
+			var config ConfigOption
+			err = yaml.Unmarshal(in, &config)
+			if err != nil {
+				return
+			}
+			list = append(list, config)
+		}
+	}
+	return
+}
+
+func SaveConfig(identity string, data ConfigOption) (err error) {
+	var out []byte
+	out, err = yaml.Marshal(data)
+	if err != nil {
+		return
+	}
+	err = ioutil.WriteFile(
+		autoload(identity),
+		out,
+		0644,
+	)
+	if err != nil {
+		return
+	}
+	return
+}
+
+func RemoveConfig(identity string) error {
+	return os.Remove(autoload(identity))
 }
