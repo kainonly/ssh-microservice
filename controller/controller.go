@@ -27,14 +27,13 @@ func (c *controller) Testing(ctx context.Context, req *pb.TestingParameter) (*pb
 			Msg:   err.Error(),
 		}, nil
 	}
-	println(privateKey)
 	cli, err := c.client.Testing(common.ConnectOption{
 		Host:       req.Host,
 		Port:       req.Port,
 		Username:   req.Username,
 		Password:   req.Password,
 		Key:        privateKey,
-		PassPhrase: []byte(nil),
+		PassPhrase: []byte(req.Passphrase),
 	})
 	if err != nil {
 		return &pb.Response{
