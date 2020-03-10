@@ -17,7 +17,7 @@ func newSafeMapConn() *safeMapConn {
 }
 
 func (s *safeMapConn) Clear(identity string) {
-	s.Map[identity] = make(map[string]*net.Conn)
+	delete(s.Map, identity)
 }
 
 func (s *safeMapConn) Get(identity string, addr string) *net.Conn {
@@ -29,6 +29,9 @@ func (s *safeMapConn) Get(identity string, addr string) *net.Conn {
 
 func (s *safeMapConn) Set(identity string, addr string, conn *net.Conn) {
 	s.Lock()
+	if s.Map[identity] == nil {
+		s.Map[identity] = make(map[string]*net.Conn)
+	}
 	s.Map[identity][addr] = conn
 	s.Unlock()
 }
