@@ -103,3 +103,22 @@ func TestPut(t *testing.T) {
 	}
 	println(string(response.Msg))
 }
+
+func TestExec(t *testing.T) {
+	defer conn.Close()
+	client := pb.NewRouterClient(conn)
+	response, err := client.Exec(
+		context.Background(),
+		&pb.ExecParameter{
+			Identity: "test",
+			Bash:     "uptime",
+		},
+	)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if response.Error != 0 {
+		t.Error(response.Msg)
+	}
+	println(string(response.Data))
+}
