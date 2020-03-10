@@ -3,6 +3,7 @@ package controller
 import (
 	"context"
 	"encoding/base64"
+	"github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
 	"gopkg.in/yaml.v2"
 	"io/ioutil"
@@ -139,4 +140,22 @@ func TestDelete(t *testing.T) {
 		t.Error(response.Msg)
 	}
 	println(string(response.Msg))
+}
+
+func TestGet(t *testing.T) {
+	defer conn.Close()
+	client := pb.NewRouterClient(conn)
+	response, err := client.Get(
+		context.Background(),
+		&pb.GetParameter{
+			Identity: "test",
+		},
+	)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if response.Error != 0 {
+		t.Error(response.Msg)
+	}
+	logrus.Info(response.Data)
 }

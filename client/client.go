@@ -152,7 +152,9 @@ func (c *Client) GetTunnelOption(identity string) (option []common.TunnelOption,
 	if err = c.empty(identity); err != nil {
 		return
 	}
-	option = *c.tunnels[identity]
+	if c.tunnels[identity] != nil {
+		option = *c.tunnels[identity]
+	}
 	return
 }
 
