@@ -92,14 +92,10 @@ func (c *Client) Testing(option common.ConnectOption) (*ssh.Client, error) {
 
 // Add or modify the ssh client
 func (c *Client) Put(identity string, option common.ConnectOption) (err error) {
-	if err = c.Delete(identity); err != nil {
-		return
-	}
-	if c.tunnels[identity] != nil {
-		c.closeTunnel(identity)
-	}
-	if c.runtime[identity] != nil {
-		c.runtime[identity].Close()
+	if c.options[identity] != nil && c.runtime[identity] != nil {
+		if err = c.Delete(identity); err != nil {
+			return
+		}
 	}
 	var wg sync.WaitGroup
 	wg.Add(1)
