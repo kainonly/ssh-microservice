@@ -31,7 +31,7 @@ func Create() *Client {
 
 // Generate Auth Method
 func (c *Client) auth(option common.ConnectOption) (auth []ssh.AuthMethod, err error) {
-	if option.Key == nil {
+	if len(option.Key) == 0 {
 		// Password AuthMethod
 		auth = []ssh.AuthMethod{
 			ssh.Password(option.Password),
@@ -39,7 +39,7 @@ func (c *Client) auth(option common.ConnectOption) (auth []ssh.AuthMethod, err e
 	} else {
 		// PrivateKey AuthMethod
 		var signer ssh.Signer
-		if option.PassPhrase != nil {
+		if len(option.PassPhrase) != 0 {
 			// With Passphrase
 			if signer, err = ssh.ParsePrivateKeyWithPassphrase(
 				option.Key,
