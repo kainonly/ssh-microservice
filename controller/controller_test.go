@@ -122,3 +122,21 @@ func TestExec(t *testing.T) {
 	}
 	println(string(response.Data))
 }
+
+func TestDelete(t *testing.T) {
+	defer conn.Close()
+	client := pb.NewRouterClient(conn)
+	response, err := client.Delete(
+		context.Background(),
+		&pb.DeleteParameter{
+			Identity: "test",
+		},
+	)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if response.Error != 0 {
+		t.Error(response.Msg)
+	}
+	println(string(response.Msg))
+}
