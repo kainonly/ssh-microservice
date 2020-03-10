@@ -1,6 +1,7 @@
 package client
 
 import (
+	"encoding/base64"
 	"errors"
 	"golang.org/x/crypto/ssh"
 	"net"
@@ -108,7 +109,15 @@ func (c *Client) Put(identity string, option common.ConnectOption) (err error) {
 		}
 	}()
 	wg.Wait()
-	return
+	return common.SaveConfig(identity, common.ConfigOption{
+		Host:       option.Host,
+		Port:       option.Port,
+		Username:   option.Username,
+		Password:   option.Password,
+		Key:        base64.StdEncoding.EncodeToString(option.Key),
+		PassPhrase: base64.StdEncoding.EncodeToString(option.PassPhrase),
+		Tunnels:    nil,
+	})
 }
 
 // Remotely execute commands via SSH
@@ -179,7 +188,7 @@ func (c *Client) Delete(identity string) (err error) {
 	}
 	delete(c.runtime, identity)
 	delete(c.options, identity)
-	return
+	return common.RemoveConfig(identity)
 }
 
 // Tunnel setting
@@ -194,7 +203,15 @@ func (c *Client) SetTunnels(identity string, options []common.TunnelOption) (err
 	for _, tunnel := range options {
 		go c.mutilTunnel(identity, tunnel)
 	}
-	return
+	return common.SaveConfig(identity, common.ConfigOption{
+		Host:       c.options[identity].Host,
+		Port:       c.options[identity].Port,
+		Username:   c.options[identity].Username,
+		Password:   c.options[identity].Password,
+		Key:        base64.StdEncoding.EncodeToString(c.options[identity].Key),
+		PassPhrase: base64.StdEncoding.EncodeToString(c.options[identity].PassPhrase),
+		Tunnels:    options,
+	})
 }
 
 // Close all running tunnels to which the identity belongs
