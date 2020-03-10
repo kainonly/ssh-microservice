@@ -147,24 +147,15 @@ func (c *controller) Lists(ctx context.Context, req *pb.ListsParameter) (*pb.Lis
 	for _, identity := range req.Identity {
 		connect, err := c.client.GetConnectOption(identity)
 		if err != nil {
-			return &pb.ListsResponse{
-				Error: 1,
-				Msg:   err.Error(),
-			}, nil
+			continue
 		}
 		cli, err := c.client.GetRuntime(identity)
 		if err != nil {
-			return &pb.ListsResponse{
-				Error: 1,
-				Msg:   err.Error(),
-			}, nil
+			continue
 		}
 		tunnel, err := c.client.GetTunnelOption(identity)
 		if err != nil {
-			return &pb.ListsResponse{
-				Error: 1,
-				Msg:   err.Error(),
-			}, nil
+			continue
 		}
 		var pbTunnelOption []*pb.TunnelOption
 		for _, option := range tunnel {

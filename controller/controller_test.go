@@ -16,7 +16,7 @@ import (
 
 var (
 	conn  *grpc.ClientConn
-	debug *DebugOption
+	debug []*DebugOption
 )
 
 type DebugOption struct {
@@ -46,11 +46,20 @@ func TestMain(m *testing.M) {
 	if err != nil {
 		log.Fatalln(err)
 	}
-	in, err = ioutil.ReadFile("../config/key.pem")
+	in, err = ioutil.ReadFile("../config/key-1.pem")
 	if err != nil {
 		log.Fatalln(err)
 	}
-	debug.PrivateKey = base64.StdEncoding.EncodeToString(in)
+	debug[0].PrivateKey = base64.StdEncoding.EncodeToString(in)
+	conn, err = grpc.Dial(cfg.Listen, grpc.WithInsecure())
+	if err != nil {
+		log.Fatalln(err)
+	}
+	in, err = ioutil.ReadFile("../config/key-2.pem")
+	if err != nil {
+		log.Fatalln(err)
+	}
+	debug[1].PrivateKey = base64.StdEncoding.EncodeToString(in)
 	conn, err = grpc.Dial(cfg.Listen, grpc.WithInsecure())
 	if err != nil {
 		log.Fatalln(err)
@@ -64,12 +73,12 @@ func TestConnect(t *testing.T) {
 	response, err := client.Testing(
 		context.Background(),
 		&pb.TestingParameter{
-			Host:       debug.Host,
-			Port:       debug.Port,
-			Username:   debug.Username,
-			Password:   debug.Password,
-			PrivateKey: debug.PrivateKey,
-			Passphrase: debug.Passphrase,
+			Host:       debug[0].Host,
+			Port:       debug[0].Port,
+			Username:   debug[0].Username,
+			Password:   debug[0].Password,
+			PrivateKey: debug[0].PrivateKey,
+			Passphrase: debug[0].Passphrase,
 		},
 	)
 	if err != nil {
@@ -88,12 +97,12 @@ func TestPut(t *testing.T) {
 		context.Background(),
 		&pb.PutParameter{
 			Identity:   "test",
-			Host:       debug.Host,
-			Port:       debug.Port,
-			Username:   debug.Username,
-			Password:   debug.Password,
-			PrivateKey: debug.PrivateKey,
-			Passphrase: debug.Passphrase,
+			Host:       debug[0].Host,
+			Port:       debug[0].Port,
+			Username:   debug[0].Username,
+			Password:   debug[0].Password,
+			PrivateKey: debug[0].PrivateKey,
+			Passphrase: debug[0].Passphrase,
 		},
 	)
 	if err != nil {
@@ -121,7 +130,70 @@ func TestExec(t *testing.T) {
 	if response.Error != 0 {
 		t.Error(response.Msg)
 	}
+	logrus.Info(response.Data)
+}
+
+func BenchmarkExec(b *testing.B) {
+	client := pb.NewRouterClient(conn)
+	for i := 0; i < b.N; i++ {
+		response, err := client.Exec(
+			context.Background(),
+			&pb.ExecParameter{
+				Identity: "test",
+				Bash:     "uptime",
+			},
+		)
+		if err != nil {
+			b.Fatal(err)
+		}
+		if response.Error != 0 {
+			b.Error(response.Msg)
+		}
+		logrus.Info(response.Data)
+	}
+}
+
+func TestPutOther(t *testing.T) {
+	defer conn.Close()
+	client := pb.NewRouterClient(conn)
+	response, err := client.Put(
+		context.Background(),
+		&pb.PutParameter{
+			Identity:   "other",
+			Host:       debug[1].Host,
+			Port:       debug[1].Port,
+			Username:   debug[1].Username,
+			Password:   debug[1].Password,
+			PrivateKey: debug[1].PrivateKey,
+			Passphrase: debug[1].Passphrase,
+		},
+	)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if response.Error != 0 {
+		t.Error(response.Msg)
+	}
 	logrus.Info(response.Msg)
+}
+
+func TestOtherExec(t *testing.T) {
+	defer conn.Close()
+	client := pb.NewRouterClient(conn)
+	response, err := client.Exec(
+		context.Background(),
+		&pb.ExecParameter{
+			Identity: "other",
+			Bash:     "uptime",
+		},
+	)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if response.Error != 0 {
+		t.Error(response.Msg)
+	}
+	logrus.Info(response.Data)
 }
 
 func TestDelete(t *testing.T) {
@@ -131,6 +203,24 @@ func TestDelete(t *testing.T) {
 		context.Background(),
 		&pb.DeleteParameter{
 			Identity: "test",
+		},
+	)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if response.Error != 0 {
+		t.Error(response.Msg)
+	}
+	logrus.Info(response.Msg)
+}
+
+func TestOtherDelete(t *testing.T) {
+	defer conn.Close()
+	client := pb.NewRouterClient(conn)
+	response, err := client.Delete(
+		context.Background(),
+		&pb.DeleteParameter{
+			Identity: "other",
 		},
 	)
 	if err != nil {
@@ -160,13 +250,31 @@ func TestGet(t *testing.T) {
 	logrus.Info(response.Data)
 }
 
+func TestOtherGet(t *testing.T) {
+	defer conn.Close()
+	client := pb.NewRouterClient(conn)
+	response, err := client.Get(
+		context.Background(),
+		&pb.GetParameter{
+			Identity: "other",
+		},
+	)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if response.Error != 0 {
+		t.Error(response.Msg)
+	}
+	logrus.Info(response.Data)
+}
+
 func TestLists(t *testing.T) {
 	defer conn.Close()
 	client := pb.NewRouterClient(conn)
 	response, err := client.Lists(
 		context.Background(),
 		&pb.ListsParameter{
-			Identity: []string{"test"},
+			Identity: []string{"test", "other"},
 		},
 	)
 	if err != nil {
@@ -201,6 +309,38 @@ func TestTunnels(t *testing.T) {
 		context.Background(),
 		&pb.TunnelsParameter{
 			Identity: "test",
+			Tunnels: []*pb.TunnelOption{
+				&pb.TunnelOption{
+					SrcIp:   "127.0.0.1",
+					SrcPort: 3306,
+					DstIp:   "127.0.0.1",
+					DstPort: 3306,
+				},
+				&pb.TunnelOption{
+					SrcIp:   "127.0.0.1",
+					SrcPort: 9200,
+					DstIp:   "127.0.0.1",
+					DstPort: 9200,
+				},
+			},
+		},
+	)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if response.Error != 0 {
+		t.Error(response.Msg)
+	}
+	logrus.Info(response.Msg)
+}
+
+func TestOtherTunnels(t *testing.T) {
+	defer conn.Close()
+	client := pb.NewRouterClient(conn)
+	response, err := client.Tunnels(
+		context.Background(),
+		&pb.TunnelsParameter{
+			Identity: "other",
 			Tunnels: []*pb.TunnelOption{
 				&pb.TunnelOption{
 					SrcIp:   "127.0.0.1",
