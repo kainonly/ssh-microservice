@@ -7,6 +7,7 @@ import (
 	"log"
 	"net"
 	"net/http"
+	_ "net/http/pprof"
 	"os"
 	"ssh-microservice/client"
 	"ssh-microservice/common"

@@ -23,6 +23,7 @@
 
 /config/config.yml
 /config/debug.yml
-/config/key.pem
+/config/key-1.pem
+/config/key-2.pem
 /config/autoload
 /go.sum
