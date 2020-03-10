@@ -60,10 +60,33 @@ func TestMain(m *testing.M) {
 func TestConnect(t *testing.T) {
 	defer conn.Close()
 	client := pb.NewRouterClient(conn)
-	println(debug.PrivateKey)
 	response, err := client.Testing(
 		context.Background(),
 		&pb.TestingParameter{
+			Host:       debug.Host,
+			Port:       debug.Port,
+			Username:   debug.Username,
+			Password:   debug.Password,
+			PrivateKey: debug.PrivateKey,
+			Passphrase: debug.Passphrase,
+		},
+	)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if response.Error != 0 {
+		t.Error(response.Msg)
+	}
+	println(string(response.Msg))
+}
+
+func TestPut(t *testing.T) {
+	defer conn.Close()
+	client := pb.NewRouterClient(conn)
+	response, err := client.Put(
+		context.Background(),
+		&pb.PutParameter{
+			Identity:   "test",
 			Host:       debug.Host,
 			Port:       debug.Port,
 			Username:   debug.Username,

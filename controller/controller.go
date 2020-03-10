@@ -53,14 +53,17 @@ func (c *controller) Put(ctx context.Context, req *pb.PutParameter) (*pb.Respons
 	if err != nil {
 		return nil, err
 	}
-	err = c.client.Put(req.Identity, common.ConnectOption{
-		Host:       req.Host,
-		Port:       req.Port,
-		Username:   req.Username,
-		Password:   req.Password,
-		Key:        privateKey,
-		PassPhrase: []byte(req.Passphrase),
-	})
+	err = c.client.Put(
+		req.Identity,
+		common.ConnectOption{
+			Host:       req.Host,
+			Port:       req.Port,
+			Username:   req.Username,
+			Password:   req.Password,
+			Key:        privateKey,
+			PassPhrase: []byte(req.Passphrase),
+		},
+	)
 	if err != nil {
 		return nil, err
 	}
