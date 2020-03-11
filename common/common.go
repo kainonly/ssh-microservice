@@ -35,6 +35,7 @@ type (
 		DstPort uint32 `yaml:"dst_port"`
 	}
 	ConfigOption struct {
+		Identity   string         `yaml:"identity"`
 		Host       string         `yaml:"host"`
 		Port       uint32         `yaml:"port"`
 		Username   string         `yaml:"username"`
@@ -125,14 +126,14 @@ func ListConfig() (list []ConfigOption, err error) {
 	return
 }
 
-func SaveConfig(identity string, data ConfigOption) (err error) {
+func SaveConfig(config ConfigOption) (err error) {
 	var out []byte
-	out, err = yaml.Marshal(data)
+	out, err = yaml.Marshal(config)
 	if err != nil {
 		return
 	}
 	err = ioutil.WriteFile(
-		autoload(identity),
+		autoload(config.Identity),
 		out,
 		0644,
 	)
