@@ -4,6 +4,7 @@ import (
 	"encoding/base64"
 	"errors"
 	"golang.org/x/crypto/ssh"
+	"log"
 	"net"
 	"ssh-microservice/common"
 	"sync"
@@ -20,6 +21,7 @@ type Client struct {
 
 // Create ssh client service
 func Create() *Client {
+	var err error
 	client := new(Client)
 	client.options = make(map[string]*common.ConnectOption)
 	client.tunnels = make(map[string]*[]common.TunnelOption)
@@ -27,6 +29,47 @@ func Create() *Client {
 	client.localListener = newSafeMapListener()
 	client.localConn = newSafeMapConn()
 	client.remoteConn = newSafeMapConn()
+	var configs []common.ConfigOption
+	configs, err = common.ListConfig()
+	for _, opt := range configs {
+		var key []byte
+		key, err = base64.StdEncoding.DecodeString(opt.Key)
+		if err != nil {
+			log.Fatalln(err)
+		}
+		var passPhrase []byte
+		passPhrase, err = base64.StdEncoding.DecodeString(opt.PassPhrase)
+		if err != nil {
+			log.Fatalln(err)
+		}
+		err = client.Put(opt.Identity, common.ConnectOption{
+			Host:       opt.Host,
+			Port:       opt.Port,
+			Username:   opt.Username,
+			Password:   opt.Password,
+			Key:        key,
+			PassPhrase: passPhrase,
+		})
+		if err != nil {
+			log.Fatalln(err)
+		}
+		var tunnels []common.TunnelOption
+		for _, val := range opt.Tunnels {
+			tunnels = append(tunnels, common.TunnelOption{
+				SrcIp:   val.SrcIp,
+				SrcPort: val.SrcPort,
+				DstIp:   val.DstIp,
+				DstPort: val.DstPort,
+			})
+		}
+		if len(tunnels) == 0 {
+			continue
+		}
+		err = client.SetTunnels(opt.Identity, tunnels)
+		if err != nil {
+			log.Fatalln(err)
+		}
+	}
 	return client
 }
 
@@ -109,7 +152,8 @@ func (c *Client) Put(identity string, option common.ConnectOption) (err error) {
 		}
 	}()
 	wg.Wait()
-	return common.SaveConfig(identity, common.ConfigOption{
+	return common.SaveConfig(common.ConfigOption{
+		Identity:   identity,
 		Host:       option.Host,
 		Port:       option.Port,
 		Username:   option.Username,
@@ -203,7 +247,8 @@ func (c *Client) SetTunnels(identity string, options []common.TunnelOption) (err
 	for _, tunnel := range options {
 		go c.mutilTunnel(identity, tunnel)
 	}
-	return common.SaveConfig(identity, common.ConfigOption{
+	return common.SaveConfig(common.ConfigOption{
+		Identity:   identity,
 		Host:       c.options[identity].Host,
 		Port:       c.options[identity].Port,
 		Username:   c.options[identity].Username,
