@@ -5,7 +5,7 @@ import (
 	"encoding/base64"
 	"github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
-	"gopkg.in/yaml.v2"
+	"gopkg.in/yaml.v3"
 	"io/ioutil"
 	"log"
 	"os"
