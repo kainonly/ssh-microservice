@@ -3,6 +3,7 @@ package client
 import (
 	"encoding/base64"
 	"errors"
+	"github.com/sirupsen/logrus"
 	"golang.org/x/crypto/ssh"
 	"log"
 	"net"
@@ -14,9 +15,9 @@ type Client struct {
 	options       map[string]*common.ConnectOption
 	tunnels       map[string]*[]common.TunnelOption
 	runtime       map[string]*ssh.Client
-	localListener *safeMapListener
-	localConn     *safeMapConn
-	remoteConn    *safeMapConn
+	localListener *syncMapListener
+	localConn     *syncMapConn
+	remoteConn    *syncMapConn
 }
 
 // Create ssh client service
@@ -26,9 +27,9 @@ func Create() *Client {
 	client.options = make(map[string]*common.ConnectOption)
 	client.tunnels = make(map[string]*[]common.TunnelOption)
 	client.runtime = make(map[string]*ssh.Client)
-	client.localListener = newSafeMapListener()
-	client.localConn = newSafeMapConn()
-	client.remoteConn = newSafeMapConn()
+	client.localListener = newSyncMapListener()
+	client.localConn = newSyncMapConn()
+	client.remoteConn = newSyncMapConn()
 	var configs []common.ConfigOption
 	configs, err = common.ListConfig()
 	for _, opt := range configs {
@@ -281,7 +282,7 @@ func (c *Client) mutilTunnel(identity string, option common.TunnelOption) {
 	remoteAddr := common.GetAddr(option.SrcIp, uint(option.SrcPort))
 	localListener, err := net.Listen("tcp", localAddr)
 	if err != nil {
-		println("<" + identity + ">:" + err.Error())
+		logrus.Error("<" + identity + ">:" + err.Error())
 		return
 	} else {
 		c.localListener.Set(identity, localAddr, &localListener)
@@ -289,14 +290,14 @@ func (c *Client) mutilTunnel(identity string, option common.TunnelOption) {
 	for {
 		localConn, err := localListener.Accept()
 		if err != nil {
-			println("<" + identity + ">:" + err.Error())
+			logrus.Error("<" + identity + ">:" + err.Error())
 			return
 		} else {
 			c.localConn.Set(identity, localAddr, &localConn)
 		}
 		remoteConn, err := c.runtime[identity].Dial("tcp", remoteAddr)
 		if err != nil {
-			println("remote <" + identity + ">:" + err.Error())
+			logrus.Error("remote <" + identity + ">:" + err.Error())
 			return
 		} else {
 			c.remoteConn.Set(identity, localAddr, &remoteConn)
