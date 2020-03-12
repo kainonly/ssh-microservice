@@ -2,6 +2,7 @@ package common
 
 import (
 	"encoding/base64"
+	"github.com/sirupsen/logrus"
 	"gopkg.in/yaml.v2"
 	"io/ioutil"
 	"log"
@@ -21,7 +22,8 @@ type DebugOption struct {
 }
 
 func TestMain(m *testing.M) {
-	in, err := ioutil.ReadFile("../config/config.yml")
+	os.Chdir("..")
+	in, err := ioutil.ReadFile("./config/config.yml")
 	if err != nil {
 		log.Fatalln(err)
 	}
@@ -30,7 +32,7 @@ func TestMain(m *testing.M) {
 	if err != nil {
 		log.Fatalln(err)
 	}
-	in, err = ioutil.ReadFile("../config/debug.yml")
+	in, err = ioutil.ReadFile("./config/debug.yml")
 	if err != nil {
 		log.Fatalln(err)
 	}
@@ -38,7 +40,7 @@ func TestMain(m *testing.M) {
 	if err != nil {
 		log.Fatalln(err)
 	}
-	in, err = ioutil.ReadFile("../config/key-1.pem")
+	in, err = ioutil.ReadFile("./config/key-1.pem")
 	if err != nil {
 		log.Fatalln(err)
 	}
@@ -47,14 +49,14 @@ func TestMain(m *testing.M) {
 }
 
 func TestConfig(t *testing.T) {
-	if _, err := os.Stat("../config/autoload"); os.IsNotExist(err) {
-		os.Mkdir("../config/autoload", os.ModeDir)
+	if _, err := os.Stat("./config/autoload"); os.IsNotExist(err) {
+		os.Mkdir("./config/autoload", os.ModeDir)
 	}
 }
 
 func TestSaveConfig(t *testing.T) {
-	identity := "test"
-	option := &ConfigOption{
+	err := SaveConfig(ConfigOption{
+		Identity:   "test",
 		Host:       debug[0].Host,
 		Port:       debug[0].Port,
 		Username:   debug[0].Username,
@@ -75,17 +77,23 @@ func TestSaveConfig(t *testing.T) {
 				DstPort: 3306,
 			},
 		},
-	}
-	out, err := yaml.Marshal(option)
+	})
 	if err != nil {
 		t.Fatal(err)
 	}
-	err = ioutil.WriteFile(
-		"../config/autoload/"+identity+".yml",
-		out,
-		0644,
-	)
+}
+
+func TestRemoveConfig(t *testing.T) {
+	err := RemoveConfig("test")
 	if err != nil {
 		t.Fatal(err)
 	}
+}
+
+func TestListConfig(t *testing.T) {
+	lists, err := ListConfig()
+	if err != nil {
+		t.Fatal(err)
+	}
+	logrus.Info(lists)
 }

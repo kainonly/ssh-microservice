@@ -29,7 +29,8 @@ type DebugOption struct {
 }
 
 func TestMain(m *testing.M) {
-	in, err := ioutil.ReadFile("../config/config.yml")
+	os.Chdir("..")
+	in, err := ioutil.ReadFile("./config/config.yml")
 	if err != nil {
 		log.Fatalln(err)
 	}
@@ -38,7 +39,7 @@ func TestMain(m *testing.M) {
 	if err != nil {
 		log.Fatalln(err)
 	}
-	in, err = ioutil.ReadFile("../config/debug.yml")
+	in, err = ioutil.ReadFile("./config/debug.yml")
 	if err != nil {
 		log.Fatalln(err)
 	}
@@ -46,7 +47,7 @@ func TestMain(m *testing.M) {
 	if err != nil {
 		log.Fatalln(err)
 	}
-	in, err = ioutil.ReadFile("../config/key-1.pem")
+	in, err = ioutil.ReadFile("./config/key-1.pem")
 	if err != nil {
 		log.Fatalln(err)
 	}
@@ -55,7 +56,7 @@ func TestMain(m *testing.M) {
 	if err != nil {
 		log.Fatalln(err)
 	}
-	in, err = ioutil.ReadFile("../config/key-2.pem")
+	in, err = ioutil.ReadFile("./config/key-2.pem")
 	if err != nil {
 		log.Fatalln(err)
 	}
