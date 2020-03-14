@@ -137,3 +137,65 @@ message TunnelsParameter {
     repeated TunnelOption tunnels = 2;
 }
 ```
+
+#### rpc Testing (TestingParameter) returns (Response) {}
+
+SSH client connection test
+
+- TestingParameter
+  - **host** `string`
+  - **port** `uint32`
+  - **username** `string`
+  - **password** `string` SSH password, default empty
+  - **private_key** `string` SSH private key (Base64)
+  - **passphrase** `string` private key passphrase
+- Response
+  - **error**
+  - **msg**
+
+```golang
+client := pb.NewRouterClient(conn)
+response, err := client.Testing(
+    context.Background(),
+    &pb.TestingParameter{
+        Host:       debug[0].Host,
+        Port:       debug[0].Port,
+        Username:   debug[0].Username,
+        Password:   debug[0].Password,
+        PrivateKey: debug[0].PrivateKey,
+        Passphrase: debug[0].Passphrase,
+    },
+)
+```
+
+#### rpc Put (PutParameter) returns (Response) {}
+
+New or updated SSH client connection
+
+- PutParameter
+  - **identity** `string` ssh identity code
+  - **host** `string`
+  - **port** `uint32`
+  - **username** `string`
+  - **password** `string` SSH password, default empty
+  - **private_key** `string` SSH private key (Base64)
+  - **passphrase** `string` private key passphrase
+- Response
+  - **error**
+  - **msg**
+
+```golang
+client := pb.NewRouterClient(conn)
+response, err := client.Put(
+    context.Background(),
+    &pb.PutParameter{
+        Identity:   "test",
+        Host:       debug[0].Host,
+        Port:       debug[0].Port,
+        Username:   debug[0].Username,
+        Password:   debug[0].Password,
+        PrivateKey: debug[0].PrivateKey,
+        Passphrase: debug[0].Passphrase,
+    },
+)
+```
