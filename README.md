@@ -2,6 +2,11 @@
 
 Use gRPC to manage remote SSH clients
 
+[![GitHub go.mod Go version](https://img.shields.io/github/go-mod/go-version/kainonly/ssh-microservice?style=flat-square)](https://github.com/kainonly/ssh-microservice)
+[![Travis](https://img.shields.io/travis/kainonly/ssh-microservice?style=flat-square)](https://www.travis-ci.org/kainonly/ssh-microservice)
+[![Docker Pulls](https://img.shields.io/docker/pulls/kainonly/ssh-microservice.svg?style=flat-square)](https://hub.docker.com/r/kainonly/ssh-microservice)
+[![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg?style=flat-square)](https://raw.githubusercontent.com/kainonly/ssh-microservice/master/LICENSE)
+
 ## Configuration
 
 For configuration, please refer to `config/config.example.yml` and create `config/config.yml`
