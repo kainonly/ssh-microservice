@@ -7,6 +7,22 @@ Use gRPC to manage remote SSH clients
 [![Docker Pulls](https://img.shields.io/docker/pulls/kainonly/ssh-microservice.svg?style=flat-square)](https://hub.docker.com/r/kainonly/ssh-microservice)
 [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg?style=flat-square)](https://raw.githubusercontent.com/kainonly/ssh-microservice/master/LICENSE)
 
+## Setup
+
+Example using docker compose
+
+```yaml
+version: "3.7"
+services: 
+  ssh:
+    image: kainonly/ssh-microservice
+    restart: always
+    volumes:
+      - ./ssh:/app/config
+    ports:
+      - 6000:6000
+```
+
 ## Configuration
 
 For configuration, please refer to `config/config.example.yml` and create `config/config.yml`
