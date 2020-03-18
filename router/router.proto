@@ -1,5 +1,5 @@
 syntax = "proto3";
-
+package SSHMicroservice;
 service Router {
     rpc Testing (TestingParameter) returns (Response) {
     }
