@@ -51,7 +51,10 @@ func (c *controller) Testing(ctx context.Context, req *pb.TestingParameter) (*pb
 func (c *controller) Put(ctx context.Context, req *pb.PutParameter) (*pb.Response, error) {
 	privateKey, err := base64.StdEncoding.DecodeString(req.PrivateKey)
 	if err != nil {
-		return nil, err
+		return &pb.Response{
+			Error: 1,
+			Msg:   err.Error(),
+		}, nil
 	}
 	err = c.client.Put(
 		req.Identity,
@@ -65,7 +68,10 @@ func (c *controller) Put(ctx context.Context, req *pb.PutParameter) (*pb.Respons
 		},
 	)
 	if err != nil {
-		return nil, err
+		return &pb.Response{
+			Error: 1,
+			Msg:   err.Error(),
+		}, nil
 	}
 	return &pb.Response{
 		Error: 0,
@@ -76,7 +82,10 @@ func (c *controller) Put(ctx context.Context, req *pb.PutParameter) (*pb.Respons
 func (c *controller) Exec(ctx context.Context, params *pb.ExecParameter) (*pb.ExecResponse, error) {
 	output, err := c.client.Exec(params.Identity, params.Bash)
 	if err != nil {
-		return nil, err
+		return &pb.ExecResponse{
+			Error: 0,
+			Data:  err.Error(),
+		}, nil
 	}
 	return &pb.ExecResponse{
 		Error: 0,
@@ -209,7 +218,10 @@ func (c *controller) Tunnels(ctx context.Context, req *pb.TunnelsParameter) (*pb
 	}
 	err := c.client.SetTunnels(req.Identity, tunnels)
 	if err != nil {
-		return nil, err
+		return &pb.Response{
+			Error: 1,
+			Msg:   err.Error(),
+		}, nil
 	}
 	return &pb.Response{
 		Error: 0,
