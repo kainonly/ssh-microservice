@@ -84,7 +84,7 @@ func (c *controller) Exec(ctx context.Context, params *pb.ExecParameter) (*pb.Ex
 	if err != nil {
 		return &pb.ExecResponse{
 			Error: 1,
-			Data:  err.Error(),
+			Msg:   err.Error(),
 		}, nil
 	}
 	return &pb.ExecResponse{
