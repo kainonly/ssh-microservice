@@ -83,7 +83,7 @@ func (c *controller) Exec(ctx context.Context, params *pb.ExecParameter) (*pb.Ex
 	output, err := c.client.Exec(params.Identity, params.Bash)
 	if err != nil {
 		return &pb.ExecResponse{
-			Error: 0,
+			Error: 1,
 			Data:  err.Error(),
 		}, nil
 	}
