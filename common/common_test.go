@@ -3,7 +3,7 @@ package common
 import (
 	"encoding/base64"
 	"github.com/sirupsen/logrus"
-	"gopkg.in/yaml.v2"
+	"gopkg.in/yaml.v3"
 	"io/ioutil"
 	"log"
 	"os"
