@@ -3,8 +3,8 @@ package controller
 import (
 	"context"
 	"encoding/base64"
-	"ssh-microservice/client"
-	"ssh-microservice/common"
+	"ssh-microservice/app/client"
+	"ssh-microservice/app/common"
 	pb "ssh-microservice/router"
 )
 

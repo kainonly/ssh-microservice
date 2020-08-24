@@ -9,9 +9,9 @@ import (
 	"net/http"
 	_ "net/http/pprof"
 	"os"
-	"ssh-microservice/client"
-	"ssh-microservice/common"
-	"ssh-microservice/controller"
+	"ssh-microservice/app/client"
+	"ssh-microservice/app/common"
+	"ssh-microservice/app/controller"
 	pb "ssh-microservice/router"
 )
 
