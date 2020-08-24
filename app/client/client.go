@@ -7,7 +7,7 @@ import (
 	"golang.org/x/crypto/ssh"
 	"log"
 	"net"
-	"ssh-microservice/common"
+	"ssh-microservice/app/common"
 	"sync"
 )
 

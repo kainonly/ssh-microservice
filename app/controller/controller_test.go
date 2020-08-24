@@ -9,7 +9,7 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
-	"ssh-microservice/common"
+	"ssh-microservice/app/common"
 	pb "ssh-microservice/router"
 	"testing"
 )
