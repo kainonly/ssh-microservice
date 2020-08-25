@@ -1,48 +1,27 @@
 package main
 
 import (
-	"google.golang.org/grpc"
+	"github.com/sirupsen/logrus"
 	"gopkg.in/yaml.v3"
 	"io/ioutil"
-	"log"
-	"net"
-	"net/http"
-	_ "net/http/pprof"
 	"os"
-	"ssh-microservice/app/client"
-	"ssh-microservice/app/common"
-	"ssh-microservice/app/controller"
-	pb "ssh-microservice/router"
+	"ssh-microservice/app/types"
 )
 
 func main() {
 	if _, err := os.Stat("./config/autoload"); os.IsNotExist(err) {
 		os.Mkdir("./config/autoload", os.ModeDir)
 	}
-	in, err := ioutil.ReadFile("./config/config.yml")
+	if _, err := os.Stat("./config/config.yml"); os.IsNotExist(err) {
+		logrus.Fatalln("The service configuration file does not exist")
+	}
+	cfgByte, err := ioutil.ReadFile("./config/config.yml")
 	if err != nil {
-		log.Fatalln(err)
+		logrus.Fatalln("Failed to read service configuration file", err)
 	}
-	cfg := common.AppOption{}
-	err = yaml.Unmarshal(in, &cfg)
+	cfg := types.AppOption{}
+	err = yaml.Unmarshal(cfgByte, &cfg)
 	if err != nil {
-		log.Fatalln(err)
+		logrus.Fatalln("Service configuration file parsing failed", err)
 	}
-	if cfg.Debug {
-		go func() {
-			http.ListenAndServe(":6060", nil)
-		}()
-	}
-	common.InitBufPool(cfg.Pool)
-	cli := client.Create()
-	listen, err := net.Listen("tcp", cfg.Listen)
-	if err != nil {
-		log.Fatalln(err)
-	}
-	server := grpc.NewServer()
-	pb.RegisterRouterServer(
-		server,
-		controller.New(cli),
-	)
-	server.Serve(listen)
 }
