@@ -1,0 +1,23 @@
+package actions
+
+import (
+	"golang.org/x/crypto/ssh"
+	"ssh-microservice/app/types"
+	"ssh-microservice/app/utils"
+)
+
+// Connect to server
+func Connect(option types.ConnectOption) (client *ssh.Client, err error) {
+	auth, err := Auth(option)
+	if err != nil {
+		return
+	}
+	config := ssh.ClientConfig{
+		User:            option.Username,
+		Auth:            auth,
+		HostKeyCallback: ssh.InsecureIgnoreHostKey(),
+	}
+	addr := utils.GetAddr(option.Host, uint(option.Port))
+	client, err = ssh.Dial("tcp", addr, &config)
+	return
+}
