@@ -1,6 +1,6 @@
 package types
 
-type ConfigOption struct {
+type ClientOption struct {
 	Identity   string         `yaml:"identity"`
 	Host       string         `yaml:"host"`
 	Port       uint32         `yaml:"port"`

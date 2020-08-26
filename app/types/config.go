@@ -1,6 +1,6 @@
 package types
 
-type AppOption struct {
+type Config struct {
 	Debug  bool   `yaml:"debug"`
 	Listen string `yaml:"listen"`
 	Pool   uint32 `yaml:"pool"`

@@ -5,6 +5,7 @@ import (
 	"gopkg.in/yaml.v3"
 	"io/ioutil"
 	"os"
+	"ssh-microservice/app"
 	"ssh-microservice/app/types"
 )
 
@@ -19,9 +20,11 @@ func main() {
 	if err != nil {
 		logrus.Fatalln("Failed to read service configuration file", err)
 	}
-	cfg := types.AppOption{}
-	err = yaml.Unmarshal(cfgByte, &cfg)
+	config := types.Config{}
+	err = yaml.Unmarshal(cfgByte, &config)
 	if err != nil {
 		logrus.Fatalln("Service configuration file parsing failed", err)
 	}
+	application := app.New(config)
+	application.Start()
 }
