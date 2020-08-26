@@ -7,7 +7,7 @@ import (
 	"sync"
 )
 
-func (c *ClientManager) SetTunnels(identity string, options []types.TunnelOption) (err error) {
+func (c *ClientManager) Tunnels(identity string, options []types.TunnelOption) (err error) {
 	if err = c.empty(identity); err != nil {
 		return
 	}
@@ -16,13 +16,13 @@ func (c *ClientManager) SetTunnels(identity string, options []types.TunnelOption
 	}
 	c.tunnels[identity] = &options
 	for _, tunnel := range options {
-		go c.mutilTunnel(identity, tunnel)
+		go c.setTunnel(identity, tunnel)
 	}
 	return
 }
 
 // Multiple tunnel settings
-func (c *ClientManager) mutilTunnel(identity string, option types.TunnelOption) {
+func (c *ClientManager) setTunnel(identity string, option types.TunnelOption) {
 	localAddr := utils.GetAddr(option.DstIp, uint(option.DstPort))
 	remoteAddr := utils.GetAddr(option.SrcIp, uint(option.SrcPort))
 	localListener, err := net.Listen("tcp", localAddr)
@@ -35,15 +35,13 @@ func (c *ClientManager) mutilTunnel(identity string, option types.TunnelOption) 
 		localConn, err := localListener.Accept()
 		if err != nil {
 			return
-		} else {
-			c.localConn.Set(identity, localAddr, &localConn)
 		}
+		c.localConn.Set(identity, localAddr, &localConn)
 		remoteConn, err := c.runtime[identity].Dial("tcp", remoteAddr)
 		if err != nil {
 			return
-		} else {
-			c.remoteConn.Set(identity, localAddr, &remoteConn)
 		}
+		c.remoteConn.Set(identity, localAddr, &remoteConn)
 		go c.forward(&localConn, &remoteConn)
 	}
 }
