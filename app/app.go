@@ -6,24 +6,18 @@ import (
 	"net/http"
 	_ "net/http/pprof"
 	"ssh-microservice/app/controller"
+	"ssh-microservice/app/manage"
 	"ssh-microservice/app/types"
 	pb "ssh-microservice/router"
-	"sync"
 )
 
 type App struct {
-	option  *types.Config
-	bufPool *sync.Pool
+	option *types.Config
 }
 
 func New(config types.Config) *App {
 	app := new(App)
 	app.option = &config
-	app.bufPool = &sync.Pool{
-		New: func() interface{} {
-			return make([]byte, config.Pool*1024)
-		},
-	}
 	return app
 }
 
@@ -40,9 +34,10 @@ func (app *App) Start() (err error) {
 		return
 	}
 	server := grpc.NewServer()
+	manager := manage.NewClientManager(app.option.Pool)
 	pb.RegisterRouterServer(
 		server,
-		controller.New(),
+		controller.New(manager),
 	)
 	server.Serve(listen)
 	return

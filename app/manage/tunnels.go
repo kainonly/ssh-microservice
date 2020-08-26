@@ -1,0 +1,85 @@
+package manage
+
+import (
+	"net"
+	"ssh-microservice/app/types"
+	"ssh-microservice/app/utils"
+	"sync"
+)
+
+func (c *ClientManager) SetTunnels(identity string, options []types.TunnelOption) (err error) {
+	if err = c.empty(identity); err != nil {
+		return
+	}
+	if c.tunnels[identity] != nil {
+		c.closeTunnel(identity)
+	}
+	c.tunnels[identity] = &options
+	for _, tunnel := range options {
+		go c.mutilTunnel(identity, tunnel)
+	}
+	return
+}
+
+// Multiple tunnel settings
+func (c *ClientManager) mutilTunnel(identity string, option types.TunnelOption) {
+	localAddr := utils.GetAddr(option.DstIp, uint(option.DstPort))
+	remoteAddr := utils.GetAddr(option.SrcIp, uint(option.SrcPort))
+	localListener, err := net.Listen("tcp", localAddr)
+	if err != nil {
+		return
+	} else {
+		c.localListener.Set(identity, localAddr, &localListener)
+	}
+	for {
+		localConn, err := localListener.Accept()
+		if err != nil {
+			return
+		} else {
+			c.localConn.Set(identity, localAddr, &localConn)
+		}
+		remoteConn, err := c.runtime[identity].Dial("tcp", remoteAddr)
+		if err != nil {
+			return
+		} else {
+			c.remoteConn.Set(identity, localAddr, &remoteConn)
+		}
+		go c.forward(&localConn, &remoteConn)
+	}
+}
+
+//  Tcp stream forwarding
+func (c *ClientManager) forward(local *net.Conn, remote *net.Conn) {
+	defer (*local).Close()
+	var wg sync.WaitGroup
+	wg.Add(2)
+	go func() {
+		defer wg.Done()
+		utils.Copy(c.bufPool, *local, *remote)
+	}()
+	go func() {
+		defer wg.Done()
+		if _, err := utils.Copy(c.bufPool, *remote, *local); err != nil {
+			(*local).Close()
+			(*remote).Close()
+		}
+		(*remote).Close()
+	}()
+	wg.Wait()
+}
+
+// Close all running tunnels to which the identity belongs
+func (c *ClientManager) closeTunnel(identity string) {
+	for _, conn := range c.remoteConn.Map[identity] {
+		(*conn).Close()
+	}
+	c.remoteConn.Clear(identity)
+	for _, conn := range c.localConn.Map[identity] {
+		(*conn).Close()
+	}
+	c.localConn.Clear(identity)
+	for _, listener := range c.localListener.Map[identity] {
+		_ = (*listener).Close()
+	}
+	c.localListener.Clear(identity)
+}
