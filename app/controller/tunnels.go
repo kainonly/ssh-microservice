@@ -2,9 +2,23 @@ package controller
 
 import (
 	"context"
+	"ssh-microservice/app/types"
 	pb "ssh-microservice/router"
 )
 
-func (c *controller) Tunnels(ctx context.Context, req *pb.TunnelsParameter) (*pb.Response, error) {
-	return nil, nil
+func (c *controller) Tunnels(ctx context.Context, param *pb.TunnelsParameter) (*pb.Response, error) {
+	tunnelOptions := make([]types.TunnelOption, len(param.Tunnels))
+	for index, option := range param.Tunnels {
+		tunnelOptions[index] = types.TunnelOption{
+			SrcIp:   option.SrcIp,
+			SrcPort: option.SrcPort,
+			DstIp:   option.DstIp,
+			DstPort: option.DstPort,
+		}
+	}
+	err := c.manager.Tunnels(param.Identity, tunnelOptions)
+	if err != nil {
+		return c.response(err)
+	}
+	return c.response(nil)
 }
