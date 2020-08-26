@@ -17,5 +17,11 @@ type ClientManager struct {
 
 func NewClientManager() *ClientManager {
 	c := new(ClientManager)
+	c.options = make(map[string]*types.SshOption)
+	c.tunnels = make(map[string]*[]types.TunnelOption)
+	c.runtime = make(map[string]*ssh.Client)
+	c.localListener = utils.NewSyncMapListener()
+	c.localConn = utils.NewSyncMapConn()
+	c.remoteConn = utils.NewSyncMapConn()
 	return c
 }
