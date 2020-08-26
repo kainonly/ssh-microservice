@@ -40,3 +40,38 @@ func (c *ClientManager) empty(identity string) error {
 	}
 	return nil
 }
+
+func (c *ClientManager) GetIdentityCollection() []string {
+	var keys []string
+	for key := range c.options {
+		keys = append(keys, key)
+	}
+	return keys
+}
+
+// Get ssh client information
+func (c *ClientManager) GetSshOption(identity string) (option *types.SshOption, err error) {
+	if err = c.empty(identity); err != nil {
+		return
+	}
+	option = c.options[identity]
+	return
+}
+
+func (c *ClientManager) GetRuntime(identity string) (client *ssh.Client, err error) {
+	if err = c.empty(identity); err != nil {
+		return
+	}
+	client = c.runtime[identity]
+	return
+}
+
+func (c *ClientManager) GetTunnelOption(identity string) (option []types.TunnelOption, err error) {
+	if err = c.empty(identity); err != nil {
+		return
+	}
+	if c.tunnels[identity] != nil {
+		option = *c.tunnels[identity]
+	}
+	return
+}
