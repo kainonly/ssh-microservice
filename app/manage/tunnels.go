@@ -1,6 +1,7 @@
 package manage
 
 import (
+	"encoding/base64"
 	"net"
 	"ssh-microservice/app/types"
 	"ssh-microservice/app/utils"
@@ -18,7 +19,16 @@ func (c *ClientManager) Tunnels(identity string, options []types.TunnelOption) (
 	for _, tunnel := range options {
 		go c.setTunnel(identity, tunnel)
 	}
-	return
+	return c.schema.Update(types.ClientOption{
+		Identity:   identity,
+		Host:       c.options[identity].Host,
+		Port:       c.options[identity].Port,
+		Username:   c.options[identity].Username,
+		Password:   c.options[identity].Password,
+		Key:        base64.StdEncoding.EncodeToString(c.options[identity].Key),
+		PassPhrase: base64.StdEncoding.EncodeToString(c.options[identity].PassPhrase),
+		Tunnels:    options,
+	})
 }
 
 // Multiple tunnel settings

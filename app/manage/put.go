@@ -1,6 +1,7 @@
 package manage
 
 import (
+	"encoding/base64"
 	"ssh-microservice/app/actions"
 	"ssh-microservice/app/types"
 	"sync"
@@ -24,5 +25,14 @@ func (c *ClientManager) Put(identity string, option types.SshOption) (err error)
 		go c.runtime[identity].Wait()
 	}()
 	wg.Wait()
-	return
+	return c.schema.Update(types.ClientOption{
+		Identity:   identity,
+		Host:       option.Host,
+		Port:       option.Port,
+		Username:   option.Username,
+		Password:   option.Password,
+		Key:        base64.StdEncoding.EncodeToString(option.Key),
+		PassPhrase: base64.StdEncoding.EncodeToString(option.PassPhrase),
+		Tunnels:    nil,
+	})
 }
