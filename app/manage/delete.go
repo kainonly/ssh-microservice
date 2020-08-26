@@ -12,5 +12,5 @@ func (c *ClientManager) Delete(identity string) (err error) {
 	}
 	delete(c.runtime, identity)
 	delete(c.options, identity)
-	return
+	return c.schema.Delete(identity)
 }

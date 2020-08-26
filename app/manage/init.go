@@ -3,6 +3,7 @@ package manage
 import (
 	"errors"
 	"golang.org/x/crypto/ssh"
+	"ssh-microservice/app/schema"
 	"ssh-microservice/app/types"
 	"ssh-microservice/app/utils"
 	"sync"
@@ -16,6 +17,7 @@ type ClientManager struct {
 	localConn     *utils.SyncMapConn
 	remoteConn    *utils.SyncMapConn
 	bufPool       *sync.Pool
+	schema        *schema.Schema
 }
 
 func NewClientManager(poolSize uint32) *ClientManager {
@@ -31,6 +33,7 @@ func NewClientManager(poolSize uint32) *ClientManager {
 			return make([]byte, poolSize*1024)
 		},
 	}
+	c.schema = schema.New()
 	return c
 }
 
