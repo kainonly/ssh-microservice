@@ -26,5 +26,8 @@ func main() {
 		logrus.Fatalln("Service configuration file parsing failed", err)
 	}
 	application := app.New(config)
-	application.Start()
+	err = application.Start()
+	if err != nil {
+		logrus.Fatalln("Service failed to start:", err)
+	}
 }
