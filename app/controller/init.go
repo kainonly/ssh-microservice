@@ -10,8 +10,8 @@ type controller struct {
 	m *manage.ClientManager
 }
 
-func New() *controller {
+func New(manager *manage.ClientManager) *controller {
 	c := new(controller)
-	c.m = manage.NewClientManager()
+	c.m = manager
 	return c
 }
