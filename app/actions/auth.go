@@ -6,7 +6,7 @@ import (
 )
 
 // Verify authentication method
-func Auth(option types.SshConnectOption) (auth []ssh.AuthMethod, err error) {
+func Auth(option types.SshOption) (auth []ssh.AuthMethod, err error) {
 	// Priority detection key method
 	if len(option.Key) != 0 {
 		var signer ssh.Signer

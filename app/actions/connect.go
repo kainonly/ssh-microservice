@@ -7,7 +7,7 @@ import (
 )
 
 // Connect to server
-func Connect(option types.SshConnectOption) (client *ssh.Client, err error) {
+func Connect(option types.SshOption) (client *ssh.Client, err error) {
 	auth, err := Auth(option)
 	if err != nil {
 		return
