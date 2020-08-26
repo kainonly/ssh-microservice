@@ -1,6 +1,6 @@
 package types
 
-type ConnectOption struct {
+type SshOption struct {
 	Host       string
 	Port       uint32
 	Username   string
