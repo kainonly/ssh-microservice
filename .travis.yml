@@ -12,6 +12,6 @@ script: sh scripts/latest.sh
 
 deploy:
   - provider: script
-    script: sh scripts/build.sh
+    script: sh scripts/tag.sh
     on:
       tags: true
