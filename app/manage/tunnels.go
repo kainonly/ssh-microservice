@@ -38,9 +38,8 @@ func (c *ClientManager) setTunnel(identity string, option types.TunnelOption) {
 	localListener, err := net.Listen("tcp", localAddr)
 	if err != nil {
 		return
-	} else {
-		c.localListener.Set(identity, localAddr, &localListener)
 	}
+	c.localListener[identity][localAddr] = &localListener
 	for {
 		localConn, err := localListener.Accept()
 		if err != nil {
@@ -86,8 +85,8 @@ func (c *ClientManager) closeTunnel(identity string) {
 		(*conn).Close()
 	}
 	c.localConn.Clear(identity)
-	for _, listener := range c.localListener.Map[identity] {
+	for _, listener := range c.localListener[identity] {
 		_ = (*listener).Close()
 	}
-	c.localListener.Clear(identity)
+	delete(c.localListener, identity)
 }
