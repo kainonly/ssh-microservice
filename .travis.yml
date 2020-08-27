@@ -8,10 +8,8 @@ services:
 go:
   - master
 
-script: sh scripts/ci-default.sh
-
 deploy:
   - provider: script
-    script: sh scripts/ci-tag.sh
+    script: sh scripts/build.sh
     on:
       tags: true
