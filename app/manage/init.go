@@ -3,7 +3,6 @@ package manage
 import (
 	"errors"
 	"golang.org/x/crypto/ssh"
-	"net"
 	"ssh-microservice/app/schema"
 	"ssh-microservice/app/types"
 	"ssh-microservice/app/utils"
@@ -13,7 +12,7 @@ type ClientManager struct {
 	options       map[string]*types.SshOption
 	tunnels       map[string]*[]types.TunnelOption
 	runtime       map[string]*ssh.Client
-	localListener map[string]map[string]*net.Listener
+	localListener *utils.SyncMapListener
 	localConn     *utils.SyncMapConn
 	remoteConn    *utils.SyncMapConn
 	schema        *schema.Schema
@@ -24,7 +23,7 @@ func NewClientManager() *ClientManager {
 	c.options = make(map[string]*types.SshOption)
 	c.tunnels = make(map[string]*[]types.TunnelOption)
 	c.runtime = make(map[string]*ssh.Client)
-	c.localListener = make(map[string]map[string]*net.Listener)
+	c.localListener = utils.NewSyncMapListener()
 	c.localConn = utils.NewSyncMapConn()
 	c.remoteConn = utils.NewSyncMapConn()
 	c.schema = schema.New()
