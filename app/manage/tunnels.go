@@ -2,6 +2,7 @@ package manage
 
 import (
 	"encoding/base64"
+	"io"
 	"net"
 	"ssh-microservice/app/types"
 	"ssh-microservice/app/utils"
@@ -62,11 +63,11 @@ func (c *ClientManager) forward(local *net.Conn, remote *net.Conn) {
 	wg.Add(2)
 	go func() {
 		defer wg.Done()
-		utils.Copy(c.bufPool, *local, *remote)
+		io.Copy(*local, *remote)
 	}()
 	go func() {
 		defer wg.Done()
-		if _, err := utils.Copy(c.bufPool, *remote, *local); err != nil {
+		if _, err := io.Copy(*remote, *local); err != nil {
 			(*local).Close()
 			(*remote).Close()
 		}
