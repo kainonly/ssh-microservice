@@ -1,6 +1,7 @@
 package manage
 
 import (
+	"encoding/base64"
 	"errors"
 	"golang.org/x/crypto/ssh"
 	"ssh-microservice/app/schema"
@@ -18,16 +19,57 @@ type ClientManager struct {
 	schema        *schema.Schema
 }
 
-func NewClientManager() *ClientManager {
-	c := new(ClientManager)
-	c.options = make(map[string]*types.SshOption)
-	c.tunnels = make(map[string]*[]types.TunnelOption)
-	c.runtime = make(map[string]*ssh.Client)
-	c.localListener = utils.NewSyncMapListener()
-	c.localConn = utils.NewSyncMapConn()
-	c.remoteConn = utils.NewSyncMapConn()
-	c.schema = schema.New()
-	return c
+func NewClientManager() (manager *ClientManager, err error) {
+	manager = new(ClientManager)
+	manager.options = make(map[string]*types.SshOption)
+	manager.tunnels = make(map[string]*[]types.TunnelOption)
+	manager.runtime = make(map[string]*ssh.Client)
+	manager.localListener = utils.NewSyncMapListener()
+	manager.localConn = utils.NewSyncMapConn()
+	manager.remoteConn = utils.NewSyncMapConn()
+	manager.schema = schema.New()
+	var clientOptions []types.ClientOption
+	clientOptions, err = manager.schema.Lists()
+	for _, option := range clientOptions {
+		var key []byte
+		key, err = base64.StdEncoding.DecodeString(option.Key)
+		if err != nil {
+			return
+		}
+		var passPhrase []byte
+		passPhrase, err = base64.StdEncoding.DecodeString(option.PassPhrase)
+		if err != nil {
+			return
+		}
+		err = manager.Put(option.Identity, types.SshOption{
+			Host:       option.Host,
+			Port:       option.Port,
+			Username:   option.Username,
+			Password:   option.Password,
+			Key:        key,
+			PassPhrase: passPhrase,
+		})
+		if err != nil {
+			return
+		}
+		var tunnels []types.TunnelOption
+		for _, tunnelOption := range option.Tunnels {
+			tunnels = append(tunnels, types.TunnelOption{
+				SrcIp:   tunnelOption.SrcIp,
+				SrcPort: tunnelOption.SrcPort,
+				DstIp:   tunnelOption.DstIp,
+				DstPort: tunnelOption.DstPort,
+			})
+		}
+		if len(tunnels) == 0 {
+			continue
+		}
+		err = manager.Tunnels(option.Identity, tunnels)
+		if err != nil {
+			return
+		}
+	}
+	return
 }
 
 func (c *ClientManager) empty(identity string) error {

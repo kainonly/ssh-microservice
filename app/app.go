@@ -34,7 +34,10 @@ func (app *App) Start() (err error) {
 		return
 	}
 	server := grpc.NewServer()
-	manager := manage.NewClientManager()
+	manager, err := manage.NewClientManager()
+	if err != nil {
+		return
+	}
 	pb.RegisterRouterServer(
 		server,
 		controller.New(manager),
