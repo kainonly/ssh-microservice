@@ -7,7 +7,6 @@ import (
 	"ssh-microservice/app/schema"
 	"ssh-microservice/app/types"
 	"ssh-microservice/app/utils"
-	"sync"
 )
 
 type ClientManager struct {
@@ -17,11 +16,10 @@ type ClientManager struct {
 	localListener map[string]map[string]*net.Listener
 	localConn     *utils.SyncMapConn
 	remoteConn    *utils.SyncMapConn
-	bufPool       *sync.Pool
 	schema        *schema.Schema
 }
 
-func NewClientManager(poolSize uint32) *ClientManager {
+func NewClientManager() *ClientManager {
 	c := new(ClientManager)
 	c.options = make(map[string]*types.SshOption)
 	c.tunnels = make(map[string]*[]types.TunnelOption)
@@ -29,11 +27,6 @@ func NewClientManager(poolSize uint32) *ClientManager {
 	c.localListener = make(map[string]map[string]*net.Listener)
 	c.localConn = utils.NewSyncMapConn()
 	c.remoteConn = utils.NewSyncMapConn()
-	c.bufPool = &sync.Pool{
-		New: func() interface{} {
-			return make([]byte, poolSize*1024)
-		},
-	}
 	c.schema = schema.New()
 	return c
 }
