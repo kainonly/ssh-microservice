@@ -12,7 +12,7 @@ Use gRPC to manage remote SSH clients
 Example using docker compose
 
 ```yaml
-version: "3.7"
+version: "3.8"
 services: 
   ssh:
     image: kainonly/ssh-microservice
@@ -27,9 +27,8 @@ services:
 
 For configuration, please refer to `config/config.example.yml` and create `config/config.yml`
 
-- **debug** `bool` Turn on debugging, that is `net/http/pprof`, and visit the address `http://localhost: 6060`
+- **debug** `bool` Turn on debugging, that is `net/http/pprof`, and visit the address `http://localhost: 6060/debug/pprof`
 - **listen** `string` Microservice listening address
-- **pool** `uint32` Memory pool in `MB`
 
 ## Service
 
@@ -37,7 +36,7 @@ The service is based on gRPC to view `router/router.proto`
 
 ```
 syntax = "proto3";
-
+package ssh;
 service Router {
     rpc Testing (TestingParameter) returns (Response) {
     }
