@@ -12,6 +12,7 @@ import (
 	"ssh-microservice/app/types"
 	pb "ssh-microservice/router"
 	"testing"
+	"time"
 )
 
 var debug []*types.DebugOption
@@ -208,6 +209,7 @@ func TestController_Lists(t *testing.T) {
 }
 
 func TestController_Tunnels(t *testing.T) {
+	time.Sleep(time.Second)
 	response, err := client.Tunnels(
 		context.Background(),
 		&pb.TunnelsParameter{
@@ -286,4 +288,35 @@ func BenchmarkController_Exec(b *testing.B) {
 		}
 	})
 	b.ReportAllocs()
+}
+
+func TestController_Delete(t *testing.T) {
+	response, err := client.Delete(
+		context.Background(),
+		&pb.DeleteParameter{
+			Identity: "debug-1",
+		},
+	)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if response.Error != 0 {
+		t.Error(response.Msg)
+	} else {
+		t.Log(response.Msg)
+	}
+	response, err = client.Delete(
+		context.Background(),
+		&pb.DeleteParameter{
+			Identity: "debug-2",
+		},
+	)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if response.Error != 0 {
+		t.Error(response.Msg)
+	} else {
+		t.Log(response.Msg)
+	}
 }
