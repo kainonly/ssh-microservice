@@ -28,7 +28,10 @@ func TestMain(m *testing.M) {
 		log.Fatalln(err)
 	}
 	debug[0].PrivateKey = base64.StdEncoding.EncodeToString(bytes)
-	manager = NewClientManager()
+	manager, err = NewClientManager()
+	if err != nil {
+		log.Fatalln(err)
+	}
 	os.Exit(m.Run())
 }
 
