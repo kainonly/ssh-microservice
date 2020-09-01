@@ -5,8 +5,8 @@ import (
 	pb "ssh-microservice/router"
 )
 
-func (c *controller) Delete(ctx context.Context, params *pb.DeleteParameter) (*pb.Response, error) {
-	err := c.manager.Delete(params.Identity)
+func (c *controller) Delete(ctx context.Context, param *pb.DeleteParameter) (*pb.Response, error) {
+	err := c.manager.Delete(param.Identity)
 	if err != nil {
 		return c.response(err)
 	}
