@@ -5,16 +5,16 @@ import (
 	pb "ssh-microservice/router"
 )
 
-func (c *controller) Get(ctx context.Context, req *pb.GetParameter) (response *pb.GetResponse, err error) {
-	sshOption, err := c.manager.GetSshOption(req.Identity)
+func (c *controller) Get(ctx context.Context, param *pb.GetParameter) (response *pb.GetResponse, err error) {
+	sshOption, err := c.manager.GetSshOption(param.Identity)
 	if err != nil {
 		return c.getErrorResponse(err)
 	}
-	client, err := c.manager.GetRuntime(req.Identity)
+	client, err := c.manager.GetRuntime(param.Identity)
 	if err != nil {
 		return c.getErrorResponse(err)
 	}
-	tunnelOption, err := c.manager.GetTunnelOption(req.Identity)
+	tunnelOption, err := c.manager.GetTunnelOption(param.Identity)
 	if err != nil {
 		return c.getErrorResponse(err)
 	}
@@ -28,7 +28,7 @@ func (c *controller) Get(ctx context.Context, req *pb.GetParameter) (response *p
 		}
 	}
 	return c.getSuccessResponse(&pb.Information{
-		Identity:  req.Identity,
+		Identity:  param.Identity,
 		Host:      sshOption.Host,
 		Port:      sshOption.Port,
 		Username:  sshOption.Username,
