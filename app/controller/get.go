@@ -6,35 +6,11 @@ import (
 )
 
 func (c *controller) Get(ctx context.Context, param *pb.GetParameter) (response *pb.GetResponse, err error) {
-	sshOption, err := c.manager.GetSshOption(param.Identity)
+	information, err := c.find(param.Identity)
 	if err != nil {
 		return c.getErrorResponse(err)
 	}
-	client, err := c.manager.GetRuntime(param.Identity)
-	if err != nil {
-		return c.getErrorResponse(err)
-	}
-	tunnelOption, err := c.manager.GetTunnelOption(param.Identity)
-	if err != nil {
-		return c.getErrorResponse(err)
-	}
-	resultTunnelOption := make([]*pb.TunnelOption, len(tunnelOption))
-	for index, option := range tunnelOption {
-		resultTunnelOption[index] = &pb.TunnelOption{
-			SrcIp:   option.SrcIp,
-			SrcPort: option.SrcPort,
-			DstIp:   option.DstIp,
-			DstPort: option.DstPort,
-		}
-	}
-	return c.getSuccessResponse(&pb.Information{
-		Identity:  param.Identity,
-		Host:      sshOption.Host,
-		Port:      sshOption.Port,
-		Username:  sshOption.Username,
-		Connected: string(client.ClientVersion()),
-		Tunnels:   resultTunnelOption,
-	})
+	return c.getSuccessResponse(information)
 }
 
 func (c *controller) getErrorResponse(err error) (*pb.GetResponse, error) {
