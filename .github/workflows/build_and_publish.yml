@@ -18,7 +18,7 @@ jobs:
         id: go
       - name: Check out code into the Go module directory
         uses: actions/checkout@v2
-      - name:
+      - name: Set Env
         run:
           - echo "::set-env name=CGO_ENABLED::0"
           - echo "::set-env name=GO111MODULE::on"
