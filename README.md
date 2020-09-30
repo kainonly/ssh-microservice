@@ -28,7 +28,7 @@ services:
 
 For configuration, please refer to `config/config.example.yml` and create `config/config.yml`
 
-- **debug** `bool` Turn on debugging, that is `net/http/pprof`, and visit the address `http://localhost: 6060/debug/pprof`
+- **debug** `string` Turn on debugging, that is `net/http/pprof`, and visit the address `http://localhost: 6060/debug/pprof`
 - **listen** `string` Microservice listening address
 
 ## Service
