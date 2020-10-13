@@ -13,9 +13,9 @@ type ClientManager struct {
 	options       map[string]*types.SshOption
 	tunnels       map[string]*[]types.TunnelOption
 	runtime       map[string]*ssh.Client
-	localListener *utils.SyncMapListener
-	localConn     *utils.SyncMapConn
-	remoteConn    *utils.SyncMapConn
+	localListener *utils.SyncListener
+	localConn     *utils.SyncConn
+	remoteConn    *utils.SyncConn
 	schema        *schema.Schema
 }
 
@@ -24,9 +24,9 @@ func NewClientManager() (manager *ClientManager, err error) {
 	manager.options = make(map[string]*types.SshOption)
 	manager.tunnels = make(map[string]*[]types.TunnelOption)
 	manager.runtime = make(map[string]*ssh.Client)
-	manager.localListener = utils.NewSyncMapListener()
-	manager.localConn = utils.NewSyncMapConn()
-	manager.remoteConn = utils.NewSyncMapConn()
+	manager.localListener = utils.NewSyncListener()
+	manager.localConn = utils.NewSyncConn()
+	manager.remoteConn = utils.NewSyncConn()
 	manager.schema = schema.New()
 	var clientOptions []types.ClientOption
 	clientOptions, err = manager.schema.Lists()
