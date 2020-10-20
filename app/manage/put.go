@@ -2,9 +2,11 @@ package manage
 
 import (
 	"encoding/base64"
+	"github.com/robfig/cron/v3"
+	"github.com/sirupsen/logrus"
+	"golang.org/x/crypto/ssh"
 	"ssh-microservice/app/actions"
 	"ssh-microservice/app/types"
-	"sync"
 )
 
 func (c *ClientManager) Put(identity string, option types.SshOption) (err error) {
@@ -13,18 +15,25 @@ func (c *ClientManager) Put(identity string, option types.SshOption) (err error)
 			return
 		}
 	}
-	var wg sync.WaitGroup
-	wg.Add(1)
-	go func() {
-		defer wg.Done()
-		c.options[identity] = &option
-		c.runtime[identity], err = actions.Connect(option)
+	c.options[identity] = &option
+	c.runtime[identity], err = actions.Connect(option)
+	if err != nil {
+		return
+	}
+	c.keepalive[identity] = cron.New(cron.WithSeconds())
+	c.keepalive[identity].AddFunc("*/30 * * * * *", func() {
+		var session *ssh.Session
+		session, err = c.runtime[identity].NewSession()
 		if err != nil {
-			return
+			logrus.Error("the [", identity, "] keeplive failed")
 		}
-		go c.runtime[identity].Wait()
-	}()
-	wg.Wait()
+		defer session.Close()
+		_, err = session.Output("uptime")
+		if err != nil {
+			logrus.Error("the [", identity, "] keeplive failed")
+		}
+	})
+	c.keepalive[identity].Start()
 	return c.schema.Update(types.ClientOption{
 		Identity:   identity,
 		Host:       option.Host,
