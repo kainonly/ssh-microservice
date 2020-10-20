@@ -10,7 +10,11 @@ func (c *ClientManager) Delete(identity string) (err error) {
 	if c.runtime[identity] != nil {
 		c.runtime[identity].Close()
 	}
+	if c.keepalive[identity] != nil {
+		c.keepalive[identity].Stop()
+	}
 	delete(c.runtime, identity)
 	delete(c.options, identity)
+	delete(c.keepalive, identity)
 	return c.schema.Delete(identity)
 }

@@ -320,3 +320,18 @@ func TestController_Delete(t *testing.T) {
 		t.Log(response.Msg)
 	}
 }
+
+func TestController_FreePort(t *testing.T) {
+	response, err := client.FreePort(
+		context.Background(),
+		&pb.NoParameter{},
+	)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if response.Error != 0 {
+		t.Error(response.Msg)
+	} else {
+		t.Log(response.Data)
+	}
+}

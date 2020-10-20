@@ -4,6 +4,8 @@ go 1.15
 
 require (
 	github.com/golang/protobuf v1.3.2
+	github.com/phayes/freeport v0.0.0-20180830031419-95f893ade6f2
+	github.com/robfig/cron/v3 v3.0.1
 	github.com/sirupsen/logrus v1.4.2
 	golang.org/x/crypto v0.0.0-20191227163750-53104e6ec876
 	google.golang.org/grpc v1.26.0

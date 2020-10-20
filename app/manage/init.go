@@ -3,6 +3,7 @@ package manage
 import (
 	"encoding/base64"
 	"errors"
+	"github.com/robfig/cron/v3"
 	"golang.org/x/crypto/ssh"
 	"ssh-microservice/app/schema"
 	"ssh-microservice/app/types"
@@ -13,17 +14,23 @@ type ClientManager struct {
 	options       map[string]*types.SshOption
 	tunnels       map[string]*[]types.TunnelOption
 	runtime       map[string]*ssh.Client
+	keepalive     map[string]*cron.Cron
 	localListener *utils.SyncListener
 	localConn     *utils.SyncConn
 	remoteConn    *utils.SyncConn
 	schema        *schema.Schema
 }
 
+var (
+	NotExists = errors.New("this identity does not exists")
+)
+
 func NewClientManager() (manager *ClientManager, err error) {
 	manager = new(ClientManager)
 	manager.options = make(map[string]*types.SshOption)
 	manager.tunnels = make(map[string]*[]types.TunnelOption)
 	manager.runtime = make(map[string]*ssh.Client)
+	manager.keepalive = make(map[string]*cron.Cron)
 	manager.localListener = utils.NewSyncListener()
 	manager.localConn = utils.NewSyncConn()
 	manager.remoteConn = utils.NewSyncConn()
@@ -74,7 +81,7 @@ func NewClientManager() (manager *ClientManager, err error) {
 
 func (c *ClientManager) empty(identity string) error {
 	if c.options[identity] == nil || c.runtime[identity] == nil {
-		return errors.New("this identity does not exists")
+		return NotExists
 	}
 	return nil
 }
