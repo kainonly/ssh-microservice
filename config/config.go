@@ -1,4 +1,4 @@
-package types
+package config
 
 type Config struct {
 	Debug  string `yaml:"debug"`

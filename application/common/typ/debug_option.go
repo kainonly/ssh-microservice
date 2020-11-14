@@ -1,4 +1,4 @@
-package types
+package typ
 
 type DebugOption struct {
 	Host       string `yaml:"host"`
