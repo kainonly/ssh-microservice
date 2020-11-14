@@ -1,4 +1,4 @@
-package types
+package typ
 
 type ClientOption struct {
 	Identity   string         `yaml:"identity"`

@@ -1,4 +1,4 @@
-package types
+package typ
 
 type TunnelOption struct {
 	SrcIp   string `yaml:"src_ip"`

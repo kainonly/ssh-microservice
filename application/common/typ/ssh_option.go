@@ -1,4 +1,4 @@
-package types
+package typ
 
 type SshOption struct {
 	Host       string
