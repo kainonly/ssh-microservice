@@ -1,6 +1,6 @@
-package typ
+package options
 
-type TunnelOption struct {
+type Tunnel struct {
 	SrcIp   string `yaml:"src_ip"`
 	SrcPort uint32 `yaml:"src_port"`
 	DstIp   string `yaml:"dst_ip"`
