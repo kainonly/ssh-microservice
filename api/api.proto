@@ -11,7 +11,7 @@ service API {
   rpc All (google.protobuf.Empty) returns (IDs) {}
   rpc Lists (IDs) returns (DataLists) {}
   rpc Tunnels (TunnelsOption) returns (google.protobuf.Empty) {}
-  rpc FreePort (google.protobuf.Empty) returns (Port){}
+  rpc FreePort (google.protobuf.Empty) returns (Port) {}
 }
 
 message Option {
@@ -70,6 +70,6 @@ message TunnelsOption {
   repeated Tunnel tunnels = 2;
 }
 
-message Port{
+message Port {
   uint32 data = 1;
 }
