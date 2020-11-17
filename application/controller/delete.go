@@ -2,13 +2,14 @@ package controller
 
 import (
 	"context"
-	pb "ssh-microservice/router"
+	"github.com/golang/protobuf/ptypes/empty"
+	pb "ssh-microservice/api"
 )
 
-func (c *controller) Delete(ctx context.Context, param *pb.DeleteParameter) (*pb.Response, error) {
-	err := c.manager.Delete(param.Identity)
-	if err != nil {
-		return c.response(err)
-	}
-	return c.response(nil)
+func (c *controller) Delete(_ context.Context, ids *pb.IDs) (_ *empty.Empty, err error) {
+	//err := c.manager.Delete(param.Identity)
+	//if err != nil {
+	//	return c.response(err)
+	//}
+	return
 }

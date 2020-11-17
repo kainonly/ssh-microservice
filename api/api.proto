@@ -1,0 +1,75 @@
+syntax = "proto3";
+package ssh;
+import "google/protobuf/empty.proto";
+
+service API {
+  rpc Testing (Option) returns (google.protobuf.Empty) {}
+  rpc Put (IOption) returns (google.protobuf.Empty) {}
+  rpc Exec (Bash) returns (Output) {}
+  rpc Delete (ID) returns (google.protobuf.Empty) {}
+  rpc Get (ID) returns (Data) {}
+  rpc All (google.protobuf.Empty) returns (IDs) {}
+  rpc Lists (IDs) returns (DataLists) {}
+  rpc Tunnels (TunnelsOption) returns (google.protobuf.Empty) {}
+  rpc FreePort (google.protobuf.Empty) returns (Port){}
+}
+
+message Option {
+  string host = 1;
+  uint32 port = 2;
+  string username = 3;
+  string password = 4;
+  string private_key = 5;
+  string passphrase = 6;
+}
+
+message IOption {
+  string id = 1;
+  Option option = 2;
+}
+
+message Bash {
+  string id = 1;
+  string bash = 2;
+}
+
+message Output {
+  string data = 1;
+}
+
+message ID {
+  string id = 1;
+}
+
+message Data {
+  string id = 1;
+  string host = 2;
+  uint32 port = 3;
+  string username = 4;
+  string connected = 5;
+  repeated Tunnel tunnels = 6;
+}
+
+message Tunnel {
+  string src_ip = 1;
+  uint32 src_port = 2;
+  string dst_ip = 3;
+  uint32 dst_port = 4;
+}
+
+message IDs {
+  repeated string ids = 1;
+}
+
+message DataLists {
+  repeated Data data = 1;
+}
+
+message TunnelsOption {
+  string id = 1;
+  repeated Tunnel tunnels = 2;
+}
+
+message Port{
+  uint32 data = 1;
+}

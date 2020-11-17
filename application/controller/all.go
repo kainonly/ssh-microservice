@@ -2,12 +2,10 @@ package controller
 
 import (
 	"context"
-	pb "ssh-microservice/router"
+	"github.com/golang/protobuf/ptypes/empty"
+	pb "ssh-microservice/api"
 )
 
-func (c *controller) All(ctx context.Context, _ *pb.NoParameter) (*pb.AllResponse, error) {
-	return &pb.AllResponse{
-		Error: 0,
-		Data:  c.manager.GetIdentityCollection(),
-	}, nil
+func (c *controller) All(_ context.Context, _ *empty.Empty) (ids *pb.IDs, err error) {
+	return
 }
