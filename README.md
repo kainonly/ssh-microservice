@@ -113,7 +113,7 @@ message Port {
 }
 ```
 
-#### rpc Testing (Option) returns (google.protobuf.Empty) {}
+## rpc Testing (Option) returns (google.protobuf.Empty) {}
 
 Test for ssh client connection
 
@@ -140,7 +140,7 @@ response, err := client.Testing(
 )
 ```
 
-#### rpc Put (IOption) returns (google.protobuf.Empty) {}
+## rpc Put (IOption) returns (google.protobuf.Empty) {}
 
 Update the ssh client configuration to the service
 
@@ -172,7 +172,7 @@ response, err := client.Put(
 )
 ```
 
-#### rpc Exec (Bash) returns (Output) {}
+## rpc Exec (Bash) returns (Output) {}
 
 Send commands to the server via ssh
 
@@ -193,7 +193,7 @@ response, err := client.Exec(
 )
 ```
 
-#### rpc Delete (ID) returns (google.protobuf.Empty) {}
+## rpc Delete (ID) returns (google.protobuf.Empty) {}
 
 Remove an ssh client from the service
 
@@ -210,7 +210,7 @@ response, err := client.Delete(
 )
 ```
 
-#### rpc Get (ID) returns (Data) {}
+## rpc Get (ID) returns (Data) {}
 
 Get the details of an ssh client from the service
 
@@ -238,7 +238,7 @@ response, err := client.Get(
 )
 ```
 
-#### rpc All (google.protobuf.Empty) returns (IDs) {}
+## rpc All (google.protobuf.Empty) returns (IDs) {}
 
 Get all ssh client IDs from the service
 
@@ -253,7 +253,7 @@ response, err := client.All(
 )
 ```
 
-#### rpc Lists (IDs) returns (DataLists) {}
+## rpc Lists (IDs) returns (DataLists) {}
 
 Get the specified list ssh client details from the service
 
@@ -282,7 +282,7 @@ response, err := client.Lists(
 )
 ```
 
-#### rpc Tunnels (TunnelsOption) returns (google.protobuf.Empty) {}
+## rpc Tunnels (TunnelsOption) returns (google.protobuf.Empty) {}
 
 Set up a tunnel for the ssh client
 
@@ -318,7 +318,7 @@ response, err := client.Tunnels(
 )
 ```
 
-#### rpc FreePort (google.protobuf.Empty) returns (Port) {}
+## rpc FreePort (google.protobuf.Empty) returns (Port) {}
 
 Get available ports on the host
 
