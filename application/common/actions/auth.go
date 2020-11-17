@@ -1,23 +1,32 @@
 package actions
 
 import (
+	"encoding/base64"
 	"golang.org/x/crypto/ssh"
-	pb "ssh-microservice/api"
+	"ssh-microservice/config/options"
 )
 
 // Verify authentication method
-func Auth(option *pb.Option) (auth []ssh.AuthMethod, err error) {
-	// Priority detection key method
-	if len(option.PrivateKey) != 0 {
+func Auth(option options.ClientOption) (auth []ssh.AuthMethod, err error) {
+	// Key method
+	if option.PrivateKey != "" {
+		var key []byte
+		if key, err = base64.StdEncoding.DecodeString(option.PrivateKey); err != nil {
+			return
+		}
 		var signer ssh.Signer
-		if len(option.Passphrase) == 0 {
-			if signer, err = ssh.ParsePrivateKey(option.PrivateKey); err != nil {
+		if option.Passphrase == "" {
+			if signer, err = ssh.ParsePrivateKey(key); err != nil {
 				return
 			}
 		} else {
+			var phrase []byte
+			if phrase, err = base64.StdEncoding.DecodeString(option.Passphrase); err != nil {
+				return
+			}
 			if signer, err = ssh.ParsePrivateKeyWithPassphrase(
-				option.PrivateKey,
-				option.Passphrase,
+				key,
+				phrase,
 			); err != nil {
 				return
 			}
@@ -27,7 +36,7 @@ func Auth(option *pb.Option) (auth []ssh.AuthMethod, err error) {
 		}
 		return
 	}
-	// Use password
+	// Password method
 	if option.Password != "" {
 		auth = []ssh.AuthMethod{
 			ssh.Password(option.Password),

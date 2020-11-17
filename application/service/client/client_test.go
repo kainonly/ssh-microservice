@@ -1,4 +1,4 @@
-package manage
+package client
 
 import (
 	"encoding/base64"
@@ -6,30 +6,29 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
-	"ssh-microservice/app/types"
+	"ssh-microservice/application/service/schema"
+	"ssh-microservice/config/options"
 	"testing"
 )
 
-var manager *ClientManager
-var debug []*types.DebugOption
+var client *Client
+var debug []*options.DebugOption
 
 func TestMain(m *testing.M) {
-	os.Chdir("../..")
-	bytes, err := ioutil.ReadFile("./config/debug/config.yml")
-	if err != nil {
+	os.Chdir("../../../")
+	var err error
+	var bs []byte
+	if bs, err = ioutil.ReadFile("./config/debug/config.yml"); err != nil {
 		log.Fatalln(err)
 	}
-	err = yaml.Unmarshal(bytes, &debug)
-	if err != nil {
+	if err = yaml.Unmarshal(bs, &debug); err != nil {
 		log.Fatalln(err)
 	}
-	bytes, err = ioutil.ReadFile("./config/debug/key-1.pem")
-	if err != nil {
+	if bs, err = ioutil.ReadFile("./config/debug/key-1.pem"); err != nil {
 		log.Fatalln(err)
 	}
-	debug[0].PrivateKey = base64.StdEncoding.EncodeToString(bytes)
-	manager, err = NewClientManager()
-	if err != nil {
+	debug[0].PrivateKey = base64.StdEncoding.EncodeToString(bs)
+	if client, err = New(schema.New("./config/autoload/")); err != nil {
 		log.Fatalln(err)
 	}
 	os.Exit(m.Run())
@@ -37,17 +36,14 @@ func TestMain(m *testing.M) {
 
 func TestClientManager_Put(t *testing.T) {
 	option := debug[0]
-	key, err := base64.StdEncoding.DecodeString(option.PrivateKey)
-	if err != nil {
-		t.Fatal(err)
-	}
-	err = manager.Put("debug-1", types.SshOption{
+	err := client.Put(options.ClientOption{
+		Identity:   "debug-1",
 		Host:       option.Host,
 		Port:       option.Port,
 		Username:   option.Username,
 		Password:   option.Password,
-		Key:        key,
-		PassPhrase: []byte(option.Passphrase),
+		PrivateKey: option.PrivateKey,
+		Passphrase: option.Passphrase,
 	})
 	if err != nil {
 		t.Fatal(err)
@@ -55,7 +51,7 @@ func TestClientManager_Put(t *testing.T) {
 }
 
 func TestClientManager_Exec(t *testing.T) {
-	output, err := manager.Exec("debug-1", "date")
+	output, err := client.Exec("debug-1", "date")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -65,7 +61,7 @@ func TestClientManager_Exec(t *testing.T) {
 }
 
 func TestClientManager_Tunnels(t *testing.T) {
-	err := manager.Tunnels("debug-1", []types.TunnelOption{
+	err := client.Tunnels("debug-1", []options.TunnelOption{
 		{
 			SrcIp:   "127.0.0.1",
 			SrcPort: 3306,
@@ -79,7 +75,7 @@ func TestClientManager_Tunnels(t *testing.T) {
 }
 
 func TestClientManager_Delete(t *testing.T) {
-	err := manager.Delete("debug-1")
+	err := client.Delete("debug-1")
 	if err != nil {
 		t.Fatal(err)
 	}

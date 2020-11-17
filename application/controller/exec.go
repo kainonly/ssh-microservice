@@ -5,26 +5,10 @@ import (
 	pb "ssh-microservice/api"
 )
 
-func (c *controller) Exec(_ context.Context, base *pb.Bash) (output *pb.Output, err error) {
-	//output, err := c.manager.Exec(param.Identity, param.Bash)
-	//if err != nil {
-	//	return c.execErrorResponse(err)
-	//}
-	//return c.execSuccessResponse(output)
-	return
+func (c *controller) Exec(_ context.Context, option *pb.Bash) (*pb.Output, error) {
+	if output, err := c.Client.Exec(option.Id, option.Bash); err != nil {
+		return nil, err
+	} else {
+		return &pb.Output{Data: output}, nil
+	}
 }
-
-//func (c *controller) execErrorResponse(err error) (*pb.ExecResponse, error) {
-//	return &pb.ExecResponse{
-//		Error: 1,
-//		Msg:   err.Error(),
-//	}, nil
-//}
-//
-//func (c *controller) execSuccessResponse(data []byte) (*pb.ExecResponse, error) {
-//	return &pb.ExecResponse{
-//		Error: 0,
-//		Msg:   "ok",
-//		Data:  string(data),
-//	}, nil
-//}
