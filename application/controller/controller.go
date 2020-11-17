@@ -1,12 +1,12 @@
 package controller
 
 import (
+	pb "ssh-microservice/api"
 	"ssh-microservice/application/common"
-	pb "ssh-microservice/router"
 )
 
 type controller struct {
-	pb.UnimplementedRouterServer
+	pb.UnimplementedAPIServer
 	*common.Dependency
 }
 
