@@ -33,200 +33,154 @@ For configuration, please refer to `config/config.example.yml` and create `confi
 
 ## Service
 
-The service is based on gRPC to view `router/router.proto`
+The service is based on gRPC to view `api/api.proto`
 
-```
+```protobuf
 syntax = "proto3";
 package ssh;
-service Router {
-    rpc Testing (TestingParameter) returns (Response) {
-    }
+import "google/protobuf/empty.proto";
 
-    rpc Put (PutParameter) returns (Response) {
-    }
-
-    rpc Exec (ExecParameter) returns (ExecResponse) {
-    }
-
-    rpc Delete (DeleteParameter) returns (Response) {
-    }
-
-    rpc Get (GetParameter) returns (GetResponse) {
-    }
-
-    rpc All (NoParameter) returns (AllResponse) {
-    }
-
-    rpc Lists (ListsParameter) returns (ListsResponse) {
-    }
-
-    rpc Tunnels (TunnelsParameter) returns (Response) {
-    }
+service API {
+  rpc Testing (Option) returns (google.protobuf.Empty) {}
+  rpc Put (IOption) returns (google.protobuf.Empty) {}
+  rpc Exec (Bash) returns (Output) {}
+  rpc Delete (ID) returns (google.protobuf.Empty) {}
+  rpc Get (ID) returns (Data) {}
+  rpc All (google.protobuf.Empty) returns (IDs) {}
+  rpc Lists (IDs) returns (DataLists) {}
+  rpc Tunnels (TunnelsOption) returns (google.protobuf.Empty) {}
+  rpc FreePort (google.protobuf.Empty) returns (Port) {}
 }
 
-message NoParameter {
+message Option {
+  string host = 1;
+  uint32 port = 2;
+  string username = 3;
+  string password = 4;
+  string private_key = 5;
+  string passphrase = 6;
 }
 
-message Response {
-    uint32 error = 1;
-    string msg = 2;
+message IOption {
+  string id = 1;
+  Option option = 2;
 }
 
-message TestingParameter {
-    string host = 1;
-    uint32 port = 2;
-    string username = 3;
-    string password = 4;
-    string private_key = 5;
-    string passphrase = 6;
+message Bash {
+  string id = 1;
+  string bash = 2;
 }
 
-message PutParameter {
-    string identity = 1;
-    string host = 2;
-    uint32 port = 3;
-    string username = 4;
-    string password = 5;
-    string private_key = 6;
-    string passphrase = 7;
+message Output {
+  bytes data = 1;
 }
 
-message ExecParameter {
-    string identity = 1;
-    string bash = 2;
+message ID {
+  string id = 1;
 }
 
-message ExecResponse {
-    uint32 error = 1;
-    string msg = 2;
-    string data = 3;
+message Data {
+  string id = 1;
+  string host = 2;
+  uint32 port = 3;
+  string username = 4;
+  string connected = 5;
+  repeated Tunnel tunnels = 6;
 }
 
-message DeleteParameter {
-    string identity = 1;
+message Tunnel {
+  string src_ip = 1;
+  uint32 src_port = 2;
+  string dst_ip = 3;
+  uint32 dst_port = 4;
 }
 
-message GetParameter {
-    string identity = 1;
+message IDs {
+  repeated string ids = 1;
 }
 
-message GetResponse {
-    uint32 error = 1;
-    string msg = 2;
-    Information data = 3;
+message DataLists {
+  repeated Data data = 1;
 }
 
-message Information {
-    string identity = 1;
-    string host = 2;
-    uint32 port = 3;
-    string username = 4;
-    string connected = 5;
-    repeated TunnelOption tunnels = 6;
+message TunnelsOption {
+  string id = 1;
+  repeated Tunnel tunnels = 2;
 }
 
-message TunnelOption {
-    string src_ip = 1;
-    uint32 src_port = 2;
-    string dst_ip = 3;
-    uint32 dst_port = 4;
-}
-
-message AllResponse {
-    uint32 error = 1;
-    string msg = 2;
-    repeated string data = 3;
-}
-
-message ListsParameter {
-    repeated string identity = 1;
-}
-
-message ListsResponse {
-    uint32 error = 1;
-    string msg = 2;
-    repeated Information data = 3;
-}
-
-message TunnelsParameter {
-    string identity = 1;
-    repeated TunnelOption tunnels = 2;
+message Port {
+  uint32 data = 1;
 }
 ```
 
-#### rpc Testing (TestingParameter) returns (Response) {}
+#### rpc Testing (Option) returns (google.protobuf.Empty) {}
 
-SSH client connection test
+Test for ssh client connection
 
-- TestingParameter
+- **Option**
   - **host** `string`
   - **port** `uint32`
   - **username** `string`
-  - **password** `string` SSH password, default empty
-  - **private_key** `string` SSH private key (Base64)
-  - **passphrase** `string` private key passphrase
-- Response
-  - **error** `uint32` error code, `0` is normal
-  - **msg** `string` error feedback
+  - **password** `string` password (default empty)
+  - **private_key** `string` private key (Base64)
+  - **passphrase** `string` key passphrase (Base64)
 
 ```golang
 client := pb.NewRouterClient(conn)
 response, err := client.Testing(
-    context.Background(),
-    &pb.TestingParameter{
-        Host:       debug[0].Host,
-        Port:       debug[0].Port,
-        Username:   debug[0].Username,
-        Password:   debug[0].Password,
-        PrivateKey: debug[0].PrivateKey,
-        Passphrase: debug[0].Passphrase,
-    },
+  context.Background(),
+  &pb.Option{
+    Host:       debug.Host,
+    Port:       debug.Port,
+    Username:   debug.Username,
+    Password:   debug.Password,
+    PrivateKey: debug.PrivateKey,
+    Passphrase: debug.Passphrase,
+  },
 )
 ```
 
-#### rpc Put (PutParameter) returns (Response) {}
+#### rpc Put (IOption) returns (google.protobuf.Empty) {}
 
-New or updated SSH client connection
+Update the ssh client configuration to the service
 
-- PutParameter
-  - **identity** `string` ssh identity code
-  - **host** `string`
-  - **port** `uint32`
-  - **username** `string`
-  - **password** `string` SSH password, default empty
-  - **private_key** `string` SSH private key (Base64)
-  - **passphrase** `string` private key passphrase
-- Response
-  - **error** `uint32` error code, `0` is normal
-  - **msg** `string` error feedback
+- **IOption**
+  - **id** `string` ID
+  - **option** `Option`
+    - **host** `string`
+    - **port** `uint32`
+    - **username** `string`
+    - **password** `string` password (default empty)
+    - **private_key** `string` private key (Base64)
+    - **passphrase** `string` key passphrase (Base64)
 
 ```golang
 client := pb.NewRouterClient(conn)
 response, err := client.Put(
-    context.Background(),
-    &pb.PutParameter{
-        Identity:   "test",
-        Host:       debug[0].Host,
-        Port:       debug[0].Port,
-        Username:   debug[0].Username,
-        Password:   debug[0].Password,
-        PrivateKey: debug[0].PrivateKey,
-        Passphrase: debug[0].Passphrase,
+  context.Background(),
+  &pb.IOption{
+    Id: "debug",
+    Option: &pb.Option{
+      Host:       debug.Host,
+      Port:       debug.Port,
+      Username:   debug.Username,
+      Password:   debug.Password,
+      PrivateKey: debug.PrivateKey,
+      Passphrase: debug.Passphrase,
     },
+  },
 )
 ```
 
-#### rpc Exec (ExecParameter) returns (ExecResponse) {}
+#### rpc Exec (Bash) returns (Output) {}
 
-Execute remote shell command
+Send commands to the server via ssh
 
-- ExecParameter
-  - **identity** `string` ssh identity code
+- **Bash**
+  - **id** `string` ID
   - **bash** `string` shell command
-- ExecResponse
-  - **error** `uint32` error code, `0` is normal
-  - **msg** `string` error feedback
-  - **data** result
+- **Output**
+  - **data** command output result
 
 ```golang
 client := pb.NewRouterClient(conn)
@@ -239,91 +193,80 @@ response, err := client.Exec(
 )
 ```
 
-#### rpc Delete (DeleteParameter) returns (Response) {}
+#### rpc Delete (ID) returns (google.protobuf.Empty) {}
 
-Remove SSH client
+Remove an ssh client from the service
 
-- DeleteParameter
-  - **identity** `string` ssh identity code
-- Response
-  - **error** `uint32` error code, `0` is normal
-  - **msg** `string` error feedback
+- **ID**
+  - **id** `string` ID
 
 ```golang
 client := pb.NewRouterClient(conn)
 response, err := client.Delete(
-    context.Background(),
-    &pb.DeleteParameter{
-        Identity: "test",
-    },
+  context.Background(),
+  &pb.ID{
+    Id: "debug",
+  },
 )
 ```
 
-#### rpc Get (GetParameter) returns (GetResponse) {}
+#### rpc Get (ID) returns (Data) {}
 
-Get the current information of the specified SSH
+Get the details of an ssh client from the service
 
-- GetParameter
-  - **identity** `string` ssh identity code
-- GetResponse
-  - **error** `uint32` error code, `0` is normal
-  - **msg** `string` error feedback
-  - **data** `Information` result
-    - **identity** `string` ssh identity code
-    - **host** `string`
-    - **port** `uint32`
-    - **username** `string`
-    - **connected** ssh connected client version
-    - **tunnels** `[]TunnelOption` ssh tunnels
-      - **src_ip** `string` origin ip
-      - **src_port** `uint32` origin port
-      - **dst_ip** `string` target ip
-      - **dst_port** `uint32` target port
+- **ID**
+  - **id** `string` ID
+- **Data**
+  - **id** `string` ID
+  - **host** `string`
+  - **port** `uint32`
+  - **username** `string`
+  - **connected** ssh connected client version
+  - **tunnels** `[]Tunnel` ssh tunnels
+    - **src_ip** `string` origin ip
+    - **src_port** `uint32` origin port
+    - **dst_ip** `string` target ip
+    - **dst_port** `uint32` target port
 
 ```golang
 client := pb.NewRouterClient(conn)
 response, err := client.Get(
-    context.Background(),
-    &pb.GetParameter{
-        Identity: "test",
-    },
+  context.Background(),
+  &pb.ID{
+    Id: "debug",
+  },
 )
 ```
 
-#### rpc All (NoParameter) returns (AllResponse) {}
+#### rpc All (google.protobuf.Empty) returns (IDs) {}
 
-Get all SSH client IDs
+Get all ssh client IDs from the service
 
-- NoParameter
-- AllResponse
-  - **error** `uint32` error code, `0` is normal
-  - **msg** `string` error feedback
-  - **data** `[]string` SSH client IDs
+- **IDs**
+  - **ids** `[]string` IDs
 
 ```golang
 client := pb.NewRouterClient(conn)
 response, err := client.All(
-    context.Background(),
-    &pb.NoParameter{},
+  context.Background(),
+  &empty.Empty{},
 )
 ```
 
-#### rpc Lists (ListsParameter) returns (ListsResponse) {}
+#### rpc Lists (IDs) returns (DataLists) {}
 
-Get current SSH information in batches
+Get the specified list ssh client details from the service
 
-- ListsParameter
-  - **identity** `[]string` ssh IDs code
-- ListsResponse
-  - **error** `uint32` error code, `0` is normal
-  - **msg** `string` error feedback
-  - **data** `[]Information` result
-    - **identity** `string` ssh identity code
+- **IDs**
+  - **ids** `[]string` IDs
+- **DataLists** 
+  - **data** `[]Data`
+    - **id** `string` ID
     - **host** `string`
     - **port** `uint32`
     - **username** `string`
     - **connected** ssh connected client version
-    - **tunnels** `[]TunnelOption` ssh tunnels
+    - **tunnels** `[]Tunnel` ssh tunnels
       - **src_ip** `string` origin ip
       - **src_port** `uint32` origin port
       - **dst_ip** `string` target ip
@@ -332,48 +275,60 @@ Get current SSH information in batches
 ```golang
 client := pb.NewRouterClient(conn)
 response, err := client.Lists(
-    context.Background(),
-    &pb.ListsParameter{
-        Identity: []string{"test", "other"},
-    },
+  context.Background(),
+  &pb.IDs{
+    Ids: []string{"debug", "debug-next"},
+  },
 )
 ```
 
-#### rpc Tunnels (TunnelsParameter) returns (Response) {}
+#### rpc Tunnels (TunnelsOption) returns (google.protobuf.Empty) {}
 
-Setting up an SSH tunnel
+Set up a tunnel for the ssh client
 
-- TunnelsParameter
-  - **identity** `string` ssh identity code
-  - **tunnels** `[]TunnelOption` ssh tunnels
+- **TunnelsOption**
+  - **id** `string` ID
+  - **tunnels** `[]Tunnel` ssh tunnels
     - **src_ip** `string` origin ip
     - **src_port** `uint32` origin port
     - **dst_ip** `string` target ip
     - **dst_port** `uint32` target port
-- Response
-  - **error** `uint32` error code, `0` is normal
-  - **msg** `string` error feedback
 
 ```golang
 client := pb.NewRouterClient(conn)
 response, err := client.Tunnels(
-    context.Background(),
-    &pb.TunnelsParameter{
-        Identity: "test",
-        Tunnels: []*pb.TunnelOption{
-            &pb.TunnelOption{
-                SrcIp:   "127.0.0.1",
-                SrcPort: 3306,
-                DstIp:   "127.0.0.1",
-                DstPort: 3306,
-            },
-            &pb.TunnelOption{
-                SrcIp:   "127.0.0.1",
-                SrcPort: 9200,
-                DstIp:   "127.0.0.1",
-                DstPort: 9200,
-            },
-        },
+  context.Background(),
+  &pb.TunnelsOption{
+    Id: "debug-1",
+    Tunnels: []*pb.Tunnel{
+      {
+        SrcIp:   "127.0.0.1",
+        SrcPort: 9200,
+        DstIp:   "127.0.0.1",
+        DstPort: 9200,
+      },
+      {
+        SrcIp:   "127.0.0.1",
+        SrcPort: 5601,
+        DstIp:   "127.0.0.1",
+        DstPort: 5601,
+      },
     },
+  },
+)
+```
+
+#### rpc FreePort (google.protobuf.Empty) returns (Port) {}
+
+Get available ports on the host
+
+- **Port**
+  - **data** `uint32` port
+
+```golang
+client := pb.NewRouterClient(conn)
+response, err := client.FreePort(
+  context.Background(),
+  &empty.Empty{},
 )
 ```
