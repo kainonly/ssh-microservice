@@ -2,25 +2,23 @@ package actions
 
 import (
 	"golang.org/x/crypto/ssh"
-	"ssh-microservice/app/types"
+	pb "ssh-microservice/api"
 )
 
 // Verify authentication method
-func Auth(option types.SshOption) (auth []ssh.AuthMethod, err error) {
+func Auth(option *pb.Option) (auth []ssh.AuthMethod, err error) {
 	// Priority detection key method
-	if len(option.Key) != 0 {
+	if len(option.PrivateKey) != 0 {
 		var signer ssh.Signer
-		if len(option.PassPhrase) == 0 {
-			signer, err = ssh.ParsePrivateKey(option.Key)
-			if err != nil {
+		if len(option.Passphrase) == 0 {
+			if signer, err = ssh.ParsePrivateKey(option.PrivateKey); err != nil {
 				return
 			}
 		} else {
-			signer, err = ssh.ParsePrivateKeyWithPassphrase(
-				option.Key,
-				option.PassPhrase,
-			)
-			if err != nil {
+			if signer, err = ssh.ParsePrivateKeyWithPassphrase(
+				option.PrivateKey,
+				option.Passphrase,
+			); err != nil {
 				return
 			}
 		}

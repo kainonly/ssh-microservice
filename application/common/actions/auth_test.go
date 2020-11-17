@@ -2,19 +2,19 @@ package actions
 
 import (
 	"reflect"
-	"ssh-microservice/app/types"
+	pb "ssh-microservice/api"
 	"testing"
 )
 
 func TestAuth(t *testing.T) {
-	option := debug[0]
-	auth, err := Auth(types.SshOption{
+	option := debugs[0]
+	auth, err := Auth(&pb.Option{
 		Host:       option.Host,
 		Port:       option.Port,
 		Username:   option.Username,
 		Password:   option.Password,
-		Key:        []byte(option.PrivateKey),
-		PassPhrase: []byte(option.Passphrase),
+		PrivateKey: []byte(option.PrivateKey),
+		Passphrase: []byte(option.Passphrase),
 	})
 	if err != nil {
 		t.Fatal(err)
