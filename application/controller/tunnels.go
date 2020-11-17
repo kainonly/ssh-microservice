@@ -4,22 +4,21 @@ import (
 	"context"
 	"github.com/golang/protobuf/ptypes/empty"
 	pb "ssh-microservice/api"
+	"ssh-microservice/config/options"
 )
 
 func (c *controller) Tunnels(_ context.Context, option *pb.TunnelsOption) (_ *empty.Empty, err error) {
-	//tunnelOptions := make([]types.TunnelOption, len(param.Tunnels))
-	//for index, option := range param.Tunnels {
-	//	tunnelOptions[index] = types.TunnelOption{
-	//		SrcIp:   option.SrcIp,
-	//		SrcPort: option.SrcPort,
-	//		DstIp:   option.DstIp,
-	//		DstPort: option.DstPort,
-	//	}
-	//}
-	//err := c.manager.Tunnels(param.Identity, tunnelOptions)
-	//if err != nil {
-	//	return c.response(err)
-	//}
-	//return c.response(nil)
-	return
+	tunnels := make([]options.TunnelOption, len(option.Tunnels))
+	for key, val := range option.Tunnels {
+		tunnels[key] = options.TunnelOption{
+			SrcIp:   val.SrcIp,
+			SrcPort: val.SrcPort,
+			DstIp:   val.DstIp,
+			DstPort: val.DstPort,
+		}
+	}
+	if err = c.Client.Tunnels(option.Id, tunnels); err != nil {
+		return
+	}
+	return &empty.Empty{}, nil
 }

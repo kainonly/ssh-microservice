@@ -8,9 +8,11 @@ import (
 
 func main() {
 	fx.New(
-		fx.NopLogger,
+		//fx.NopLogger,
 		fx.Provide(
 			bootstrap.LoadConfiguration,
+			bootstrap.InitializeSchema,
+			bootstrap.InitializeClient,
 		),
 		fx.Invoke(application.Application),
 	).Run()

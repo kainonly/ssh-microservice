@@ -7,9 +7,9 @@ import (
 	"net"
 	"net/http"
 	_ "net/http/pprof"
+	pb "ssh-microservice/api"
 	"ssh-microservice/application/common"
 	"ssh-microservice/application/controller"
-	pb "ssh-microservice/router"
 )
 
 func Application(dep common.Dependency) (err error) {
@@ -34,7 +34,7 @@ func Application(dep common.Dependency) (err error) {
 			grpcZap.UnaryServerInterceptor(logger),
 		),
 	)
-	pb.RegisterRouterServer(
+	pb.RegisterAPIServer(
 		server,
 		controller.New(&dep),
 	)

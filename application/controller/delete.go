@@ -6,10 +6,9 @@ import (
 	pb "ssh-microservice/api"
 )
 
-func (c *controller) Delete(_ context.Context, ids *pb.IDs) (_ *empty.Empty, err error) {
-	//err := c.manager.Delete(param.Identity)
-	//if err != nil {
-	//	return c.response(err)
-	//}
-	return
+func (c *controller) Delete(_ context.Context, option *pb.ID) (_ *empty.Empty, err error) {
+	if err = c.Client.Delete(option.Id); err != nil {
+		return
+	}
+	return &empty.Empty{}, nil
 }

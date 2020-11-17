@@ -2,11 +2,11 @@ package actions
 
 import (
 	"golang.org/x/crypto/ssh"
-	pb "ssh-microservice/api"
+	"ssh-microservice/config/options"
 )
 
 // Connect to server
-func Connect(option *pb.Option) (client *ssh.Client, err error) {
+func Connect(option options.ClientOption) (client *ssh.Client, err error) {
 	auth, err := Auth(option)
 	if err != nil {
 		return

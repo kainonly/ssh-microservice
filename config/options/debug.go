@@ -1,6 +1,6 @@
 package options
 
-type Debug struct {
+type DebugOption struct {
 	Host       string `yaml:"host"`
 	Port       uint32 `yaml:"port"`
 	Username   string `yaml:"username"`
