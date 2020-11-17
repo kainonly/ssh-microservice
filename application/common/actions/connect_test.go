@@ -1,24 +1,19 @@
 package actions
 
 import (
-	"encoding/base64"
-	"ssh-microservice/app/types"
+	pb "ssh-microservice/api"
 	"testing"
 )
 
 func TestConnect(t *testing.T) {
-	option := debug[0]
-	key, err := base64.StdEncoding.DecodeString(option.PrivateKey)
-	if err != nil {
-		t.Fatal(err)
-	}
-	client, err := Connect(types.SshOption{
+	option := debugs[0]
+	client, err := Connect(&pb.Option{
 		Host:       option.Host,
 		Port:       option.Port,
 		Username:   option.Username,
 		Password:   option.Password,
-		Key:        key,
-		PassPhrase: []byte(option.Passphrase),
+		PrivateKey: []byte(option.PrivateKey),
+		Passphrase: []byte(option.Passphrase),
 	})
 	if err != nil {
 		t.Fatal(err)
