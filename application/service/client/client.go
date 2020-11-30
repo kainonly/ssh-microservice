@@ -2,6 +2,7 @@ package client
 
 import (
 	"errors"
+	"golang.org/x/crypto/ssh"
 	"ssh-microservice/application/service/client/utils"
 	"ssh-microservice/application/service/schema"
 	"ssh-microservice/config/options"
@@ -53,4 +54,11 @@ func New(schema *schema.Schema) (client *Client, err error) {
 		}
 	}
 	return
+}
+
+func (c *Client) GetOptionAndClient(identity string) (*options.ClientOption, *ssh.Client, error) {
+	if identity == "" {
+		return nil, nil, NotExists
+	}
+	return c.Options.Get(identity), c.Clients.Get(identity), nil
 }

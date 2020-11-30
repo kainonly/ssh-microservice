@@ -1,7 +1,9 @@
 package application
 
 import (
+	grpc_middleware "github.com/grpc-ecosystem/go-grpc-middleware"
 	grpcZap "github.com/grpc-ecosystem/go-grpc-middleware/logging/zap"
+	grpcRecovery "github.com/grpc-ecosystem/go-grpc-middleware/recovery"
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
 	"net"
@@ -10,6 +12,7 @@ import (
 	pb "ssh-microservice/api"
 	"ssh-microservice/application/common"
 	"ssh-microservice/application/controller"
+	"ssh-microservice/bootstrap"
 )
 
 func Application(dep common.Dependency) (err error) {
@@ -28,10 +31,16 @@ func Application(dep common.Dependency) (err error) {
 	defer logger.Sync()
 	server := grpc.NewServer(
 		grpc.StreamInterceptor(
-			grpcZap.StreamServerInterceptor(logger),
+			grpc_middleware.ChainStreamServer(
+				grpcZap.StreamServerInterceptor(logger),
+				grpcRecovery.StreamServerInterceptor(),
+			),
 		),
 		grpc.UnaryInterceptor(
-			grpcZap.UnaryServerInterceptor(logger),
+			grpc_middleware.ChainUnaryServer(
+				grpcZap.UnaryServerInterceptor(logger),
+				grpcRecovery.UnaryServerInterceptor(),
+			),
 		),
 	)
 	pb.RegisterAPIServer(
@@ -39,5 +48,8 @@ func Application(dep common.Dependency) (err error) {
 		controller.New(&dep),
 	)
 	go server.Serve(listen)
+	if cfg.Gateway != "" {
+		go bootstrap.ApiGateway(cfg)
+	}
 	return
 }

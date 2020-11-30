@@ -6,9 +6,12 @@ import (
 )
 
 func (c *controller) Lists(_ context.Context, option *pb.IDs) (*pb.DataLists, error) {
+	var err error
 	lists := make([]*pb.Data, len(option.Ids))
 	for key, val := range option.Ids {
-		lists[key] = c.find(val)
+		if lists[key], err = c.find(val); err != nil {
+			continue
+		}
 	}
 	return &pb.DataLists{Data: lists}, nil
 }

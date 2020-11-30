@@ -2,8 +2,8 @@
 
 Use gRPC to manage remote SSH clients
 
-[![GitHub go.mod Go version](https://img.shields.io/github/go-mod/go-version/kain-lab/ssh-microservice?style=flat-square)](https://github.com/kain-lab/ssh-microservice)
 [![Github Actions](https://img.shields.io/github/workflow/status/kain-lab/ssh-microservice/release?style=flat-square)](https://github.com/kain-lab/ssh-microservice/actions)
+[![GitHub go.mod Go version](https://img.shields.io/github/go-mod/go-version/kain-lab/ssh-microservice?style=flat-square)](https://github.com/kain-lab/ssh-microservice)
 [![Image Size](https://img.shields.io/docker/image-size/kainonly/ssh-microservice?style=flat-square)](https://hub.docker.com/r/kainonly/ssh-microservice)
 [![Docker Pulls](https://img.shields.io/docker/pulls/kainonly/ssh-microservice.svg?style=flat-square)](https://hub.docker.com/r/kainonly/ssh-microservice)
 [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg?style=flat-square)](https://raw.githubusercontent.com/kain-lab/ssh-microservice/master/LICENSE)
@@ -22,6 +22,7 @@ services:
       - ./ssh:/app/config
     ports:
       - 6000:6000
+      - 8080:8080
 ```
 
 ## Configuration
@@ -29,7 +30,8 @@ services:
 For configuration, please refer to `config/config.example.yml` and create `config/config.yml`
 
 - **debug** `string` Turn on debugging, that is `net/http/pprof`, and visit the address `http://localhost: 6060/debug/pprof`
-- **listen** `string` Microservice listening address
+- **listen** `string` grpc server listening address
+- **gateway** `string` API gateway server listening address
 
 ## Service
 
@@ -38,18 +40,61 @@ The service is based on gRPC to view `api/api.proto`
 ```protobuf
 syntax = "proto3";
 package ssh;
+option go_package = "ssh-microservice/gen/go/ssh";
 import "google/protobuf/empty.proto";
+import "google/api/annotations.proto";
 
 service API {
-  rpc Testing (Option) returns (google.protobuf.Empty) {}
-  rpc Put (IOption) returns (google.protobuf.Empty) {}
-  rpc Exec (Bash) returns (Output) {}
-  rpc Delete (ID) returns (google.protobuf.Empty) {}
-  rpc Get (ID) returns (Data) {}
-  rpc All (google.protobuf.Empty) returns (IDs) {}
-  rpc Lists (IDs) returns (DataLists) {}
-  rpc Tunnels (TunnelsOption) returns (google.protobuf.Empty) {}
-  rpc FreePort (google.protobuf.Empty) returns (Port) {}
+  rpc Testing (Option) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      post: "/testing",
+      body: "*",
+    };
+  }
+  rpc Put (IOption) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      put: "/client",
+      body: "*",
+    };
+  }
+  rpc Exec (Bash) returns (Output) {
+    option (google.api.http) = {
+      post: "/exec",
+      body: "*",
+    };
+  }
+  rpc Delete (ID) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      delete: "/client",
+    };
+  }
+  rpc Get (ID) returns (Data) {
+    option (google.api.http) = {
+      get: "/client",
+    };
+  }
+  rpc All (google.protobuf.Empty) returns (IDs) {
+    option (google.api.http) = {
+      get: "/clients",
+    };
+  }
+  rpc Lists (IDs) returns (DataLists) {
+    option (google.api.http) = {
+      post: "/clients",
+      body: "*"
+    };
+  }
+  rpc Tunnels (TunnelsOption) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      put: "/tunnels",
+      body: "*",
+    };
+  }
+  rpc FreePort (google.protobuf.Empty) returns (Port) {
+    option (google.api.http) = {
+      get: "/free_port",
+    };
+  }
 }
 
 message Option {
@@ -113,9 +158,11 @@ message Port {
 }
 ```
 
-## rpc Testing (Option) returns (google.protobuf.Empty) {}
+## Testing (Option) returns (google.protobuf.Empty) {} 
 
-Test for ssh client connection
+test for ssh client connection
+
+### RPC
 
 - **Option**
   - **host** `string`
@@ -140,9 +187,28 @@ response, err := client.Testing(
 )
 ```
 
-## rpc Put (IOption) returns (google.protobuf.Empty) {}
+### API Gateway
+
+- **POST** `/testing`
+
+```http
+POST /testing HTTP/1.1
+Host: localhost:8080
+Content-Type: application/json
+
+{
+    "host":"dell",
+    "port":22,
+    "username":"root",
+    "private_key":"LS0......o="
+}
+```
+
+## Put (IOption) returns (google.protobuf.Empty) {}
 
 Update the ssh client configuration to the service
+
+### RPC
 
 - **IOption**
   - **id** `string` ID
@@ -172,9 +238,31 @@ response, err := client.Put(
 )
 ```
 
-## rpc Exec (Bash) returns (Output) {}
+### API Gateway
+
+- **PUT** `/client`
+
+```http
+PUT /client HTTP/1.1
+Host: localhost:8080
+Content-Type: application/json
+
+{
+    "id": "debug",
+    "option": {
+        "host": "dell",
+        "port": 22,
+        "username": "root",
+        "private_key": "LS0......o="
+    }
+}
+```
+
+## Exec (Bash) returns (Output) {}
 
 Send commands to the server via ssh
+
+### RPC
 
 - **Bash**
   - **id** `string` ID
@@ -187,15 +275,32 @@ client := pb.NewRouterClient(conn)
 response, err := client.Exec(
     context.Background(),
     &pb.ExecParameter{
-        Identity: "test",
+        Identity: "debug",
         Bash:     "uptime",
     },
 )
 ```
 
-## rpc Delete (ID) returns (google.protobuf.Empty) {}
+### API Gateway
+
+- **POST** `/exec`
+
+```http
+POST /exec HTTP/1.1
+Host: localhost:8080
+Content-Type: application/json
+
+{
+    "id": "debug",
+    "bash": "uptime"
+}
+```
+
+## Delete (ID) returns (google.protobuf.Empty) {}
 
 Remove an ssh client from the service
+
+### RPC
 
 - **ID**
   - **id** `string` ID
@@ -210,9 +315,20 @@ response, err := client.Delete(
 )
 ```
 
-## rpc Get (ID) returns (Data) {}
+### API Gateway
+
+- **DELETE** `/client`
+
+```http
+DELETE /client?id=debug HTTP/1.1
+Host: localhost:8080
+```
+
+## Get (ID) returns (Data) {}
 
 Get the details of an ssh client from the service
+
+### RPC
 
 - **ID**
   - **id** `string` ID
@@ -238,9 +354,20 @@ response, err := client.Get(
 )
 ```
 
-## rpc All (google.protobuf.Empty) returns (IDs) {}
+### API Gateway
+
+- **GET** `/client`
+
+```http
+GET /client?id=debug HTTP/1.1
+Host: localhost:8080
+```
+
+## All (google.protobuf.Empty) returns (IDs) {}
 
 Get all ssh client IDs from the service
+
+### RPC
 
 - **IDs**
   - **ids** `[]string` IDs
@@ -253,9 +380,20 @@ response, err := client.All(
 )
 ```
 
-## rpc Lists (IDs) returns (DataLists) {}
+### API Gateway
+
+- **GET** `/clients`
+
+```http
+GET /clients HTTP/1.1
+Host: localhost:8080
+```
+
+## Lists (IDs) returns (DataLists) {}
 
 Get the specified list ssh client details from the service
+
+### RPC
 
 - **IDs**
   - **ids** `[]string` IDs
@@ -282,9 +420,28 @@ response, err := client.Lists(
 )
 ```
 
-## rpc Tunnels (TunnelsOption) returns (google.protobuf.Empty) {}
+### API Gateway
+
+- **POST** `/clients`
+
+```http
+POST /clients HTTP/1.1
+Host: localhost:8080
+Content-Type: application/json
+Content-Length: 39
+
+{
+    "ids": [
+        "debug"
+    ]
+}
+```
+
+## Tunnels (TunnelsOption) returns (google.protobuf.Empty) {}
 
 Set up a tunnel for the ssh client
+
+### RPC
 
 - **TunnelsOption**
   - **id** `string` ID
@@ -318,9 +475,39 @@ response, err := client.Tunnels(
 )
 ```
 
-## rpc FreePort (google.protobuf.Empty) returns (Port) {}
+### API Gateway
+
+- **PUT** `/tunnels`
+
+```http
+PUT /tunnels HTTP/1.1
+Host: localhost:8080
+Content-Type: application/json
+
+{
+    "id": "debug",
+    "tunnels": [
+        {
+            "src_ip": "127.0.0.1",
+            "src_port": 9200,
+            "dst_ip": "127.0.0.1",
+            "dst_port": 9200
+        },
+        {
+            "src_ip": "127.0.0.1",
+            "src_port": 5601,
+            "dst_ip": "127.0.0.1",
+            "dst_port": 5601
+        }
+    ]
+}
+```
+
+## FreePort (google.protobuf.Empty) returns (Port) {}
 
 Get available ports on the host
+
+### RPC
 
 - **Port**
   - **data** `uint32` port
@@ -331,4 +518,13 @@ response, err := client.FreePort(
   context.Background(),
   &empty.Empty{},
 )
+```
+
+### API Gateway
+
+- **GET** `/free_port`
+
+```http
+GET /free_port HTTP/1.1
+Host: localhost:8080
 ```
