@@ -51,6 +51,7 @@ func TestMain(m *testing.M) {
 }
 
 func TestController_Testing(t *testing.T) {
+	log.Println(debug[0].PrivateKey)
 	response, err := client.Testing(
 		context.Background(),
 		&pb.Option{

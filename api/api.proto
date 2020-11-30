@@ -1,17 +1,60 @@
 syntax = "proto3";
 package ssh;
+option go_package = "ssh-microservice/gen/go/ssh";
 import "google/protobuf/empty.proto";
+import "google/api/annotations.proto";
 
 service API {
-  rpc Testing (Option) returns (google.protobuf.Empty) {}
-  rpc Put (IOption) returns (google.protobuf.Empty) {}
-  rpc Exec (Bash) returns (Output) {}
-  rpc Delete (ID) returns (google.protobuf.Empty) {}
-  rpc Get (ID) returns (Data) {}
-  rpc All (google.protobuf.Empty) returns (IDs) {}
-  rpc Lists (IDs) returns (DataLists) {}
-  rpc Tunnels (TunnelsOption) returns (google.protobuf.Empty) {}
-  rpc FreePort (google.protobuf.Empty) returns (Port) {}
+  rpc Testing (Option) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      post: "/testing",
+      body: "*",
+    };
+  }
+  rpc Put (IOption) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      put: "/client",
+      body: "*",
+    };
+  }
+  rpc Exec (Bash) returns (Output) {
+    option (google.api.http) = {
+      post: "/exec",
+      body: "*",
+    };
+  }
+  rpc Delete (ID) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      delete: "/client",
+    };
+  }
+  rpc Get (ID) returns (Data) {
+    option (google.api.http) = {
+      get: "/client",
+    };
+  }
+  rpc All (google.protobuf.Empty) returns (IDs) {
+    option (google.api.http) = {
+      get: "/clients",
+    };
+  }
+  rpc Lists (IDs) returns (DataLists) {
+    option (google.api.http) = {
+      post: "/clients",
+      body: "*"
+    };
+  }
+  rpc Tunnels (TunnelsOption) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      put: "/tunnels",
+      body: "*",
+    };
+  }
+  rpc FreePort (google.protobuf.Empty) returns (Port) {
+    option (google.api.http) = {
+      get: "/free_port",
+    };
+  }
 }
 
 message Option {

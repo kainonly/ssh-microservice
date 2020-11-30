@@ -4,14 +4,12 @@ import (
 	"context"
 	"github.com/golang/protobuf/ptypes/empty"
 	"golang.org/x/crypto/ssh"
-	"log"
 	pb "ssh-microservice/api"
 	"ssh-microservice/application/common/actions"
 	"ssh-microservice/config/options"
 )
 
 func (c *controller) Testing(_ context.Context, option *pb.Option) (_ *empty.Empty, err error) {
-	log.Println(option)
 	var client *ssh.Client
 	if client, err = actions.Connect(options.ClientOption{
 		Host:       option.Host,

@@ -16,9 +16,11 @@ func New(dep *common.Dependency) *controller {
 	return c
 }
 
-func (c *controller) find(identity string) *pb.Data {
-	data := c.Client.Options.Get(identity)
-	client := c.Client.Clients.Get(identity)
+func (c *controller) find(identity string) (*pb.Data, error) {
+	data, client, err := c.Client.GetOptionAndClient(identity)
+	if err != nil {
+		return nil, err
+	}
 	tunnels := make([]*pb.Tunnel, len(data.Tunnels))
 	for key, val := range data.Tunnels {
 		tunnels[key] = &pb.Tunnel{
@@ -35,5 +37,5 @@ func (c *controller) find(identity string) *pb.Data {
 		Username:  data.Username,
 		Connected: string(client.ClientVersion()),
 		Tunnels:   tunnels,
-	}
+	}, nil
 }
