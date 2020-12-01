@@ -173,7 +173,7 @@ test for ssh client connection
   - **passphrase** `string` key passphrase (Base64)
 
 ```golang
-client := pb.NewRouterClient(conn)
+client := pb.NewAPIClient(conn)
 response, err := client.Testing(
   context.Background(),
   &pb.Option{
@@ -221,7 +221,7 @@ Update the ssh client configuration to the service
     - **passphrase** `string` key passphrase (Base64)
 
 ```golang
-client := pb.NewRouterClient(conn)
+client := pb.NewAPIClient(conn)
 response, err := client.Put(
   context.Background(),
   &pb.IOption{
@@ -271,7 +271,7 @@ Send commands to the server via ssh
   - **data** command output result
 
 ```golang
-client := pb.NewRouterClient(conn)
+client := pb.NewAPIClient(conn)
 response, err := client.Exec(
     context.Background(),
     &pb.ExecParameter{
@@ -306,7 +306,7 @@ Remove an ssh client from the service
   - **id** `string` ID
 
 ```golang
-client := pb.NewRouterClient(conn)
+client := pb.NewAPIClient(conn)
 response, err := client.Delete(
   context.Background(),
   &pb.ID{
@@ -345,7 +345,7 @@ Get the details of an ssh client from the service
     - **dst_port** `uint32` target port
 
 ```golang
-client := pb.NewRouterClient(conn)
+client := pb.NewAPIClient(conn)
 response, err := client.Get(
   context.Background(),
   &pb.ID{
@@ -373,7 +373,7 @@ Get all ssh client IDs from the service
   - **ids** `[]string` IDs
 
 ```golang
-client := pb.NewRouterClient(conn)
+client := pb.NewAPIClient(conn)
 response, err := client.All(
   context.Background(),
   &empty.Empty{},
@@ -411,7 +411,7 @@ Get the specified list ssh client details from the service
       - **dst_port** `uint32` target port
 
 ```golang
-client := pb.NewRouterClient(conn)
+client := pb.NewAPIClient(conn)
 response, err := client.Lists(
   context.Background(),
   &pb.IDs{
@@ -452,7 +452,7 @@ Set up a tunnel for the ssh client
     - **dst_port** `uint32` target port
 
 ```golang
-client := pb.NewRouterClient(conn)
+client := pb.NewAPIClient(conn)
 response, err := client.Tunnels(
   context.Background(),
   &pb.TunnelsOption{
@@ -513,7 +513,7 @@ Get available ports on the host
   - **data** `uint32` port
 
 ```golang
-client := pb.NewRouterClient(conn)
+client := pb.NewAPIClient(conn)
 response, err := client.FreePort(
   context.Background(),
   &empty.Empty{},
