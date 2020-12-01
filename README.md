@@ -158,7 +158,7 @@ message Port {
 }
 ```
 
-## Testing (Option) returns (google.protobuf.Empty) {} 
+## Testing (Option) returns (google.protobuf.Empty) 
 
 test for ssh client connection
 
@@ -204,7 +204,7 @@ Content-Type: application/json
 }
 ```
 
-## Put (IOption) returns (google.protobuf.Empty) {}
+## Put (IOption) returns (google.protobuf.Empty)
 
 Update the ssh client configuration to the service
 
@@ -258,7 +258,7 @@ Content-Type: application/json
 }
 ```
 
-## Exec (Bash) returns (Output) {}
+## Exec (Bash) returns (Output)
 
 Send commands to the server via ssh
 
@@ -296,7 +296,7 @@ Content-Type: application/json
 }
 ```
 
-## Delete (ID) returns (google.protobuf.Empty) {}
+## Delete (ID) returns (google.protobuf.Empty)
 
 Remove an ssh client from the service
 
@@ -324,7 +324,7 @@ DELETE /client?id=debug HTTP/1.1
 Host: localhost:8080
 ```
 
-## Get (ID) returns (Data) {}
+## Get (ID) returns (Data)
 
 Get the details of an ssh client from the service
 
@@ -363,7 +363,7 @@ GET /client?id=debug HTTP/1.1
 Host: localhost:8080
 ```
 
-## All (google.protobuf.Empty) returns (IDs) {}
+## All (google.protobuf.Empty) returns (IDs)
 
 Get all ssh client IDs from the service
 
@@ -389,7 +389,7 @@ GET /clients HTTP/1.1
 Host: localhost:8080
 ```
 
-## Lists (IDs) returns (DataLists) {}
+## Lists (IDs) returns (DataLists)
 
 Get the specified list ssh client details from the service
 
@@ -437,7 +437,7 @@ Content-Length: 39
 }
 ```
 
-## Tunnels (TunnelsOption) returns (google.protobuf.Empty) {}
+## Tunnels (TunnelsOption) returns (google.protobuf.Empty)
 
 Set up a tunnel for the ssh client
 
@@ -503,7 +503,7 @@ Content-Type: application/json
 }
 ```
 
-## FreePort (google.protobuf.Empty) returns (Port) {}
+## FreePort (google.protobuf.Empty) returns (Port)
 
 Get available ports on the host
 
