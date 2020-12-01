@@ -20,7 +20,7 @@ jobs:
       - uses: actions/checkout@v2
 
       - name: Build Application
-        run: go build -tags=jsoniter -o dist/func-api main.go
+        run: go build -tags=jsoniter -o dist/ssh-microservice main.go
         env:
           CGO_ENABLED: 0
           GO111MODULE: on
